@@ -7,16 +7,15 @@ class CAR(object):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.hp = hp                # 小车血量
-        self.bullet = bullet
-        self.heat = heat
-        self.x = local[0]
-        self.y = local[1]
-        self.angle = angle
-        self.yaw = yaw
-        self.pitch = pitch
-        self.buff = buff
-        self.peak = peak
-        self.inSight = [0, 0]        # 敌方车辆是否在视野内 0->不在 1->在
+        self.bullet = bullet        # 子弹数
+        self.heat = heat            # 枪管热量
+        self.x = local[0]           # 横坐标
+        self.y = local[1]           # 纵坐标
+        self.angle = angle          # 绝对角度
+        self.yaw = yaw              # 炮台水平角度
+        self.buff = buff            # 禁区buff
+        self.peak = peak            # 小车顶点数组
+        self.inSight = [0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
 
     def v_punishment(self, v):
         """
