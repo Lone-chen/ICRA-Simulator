@@ -1,17 +1,22 @@
-class car(object):
-    def __init__(self, bullet, angle, yaw, pitch, buff=0, hp=2000, heat=0, local=(0, 0)):
+from map import MAP
+import math
+
+
+class CAR(object):
+    def __init__(self, bullet, angle, yaw, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.hp = hp                # 小车血量
         self.bullet = bullet
         self.heat = heat
-        self.x = local(0)
-        self.y = local(1)
+        self.x = local[0]
+        self.y = local[1]
         self.angle = angle
         self.yaw = yaw
         self.pitch = pitch
         self.buff = buff
-        self.inSight = [0,0]        # 敌方车辆是否在视野内 0->不在 1->在
+        self.peak = peak
+        self.inSight = [0, 0]        # 敌方车辆是否在视野内 0->不在 1->在
 
     def v_punishment(self, v):
         """
@@ -45,7 +50,7 @@ class car(object):
     def change_bullet(self, change):
         self.bullet += change
 
-    def change_heat(self, v): 
+    def change_heat(self, v):
         """
         计算枪口热量的冷却和过热惩罚
         ：param v:子弹速度
@@ -99,15 +104,48 @@ class car(object):
         self.yaw += change
 
     def change_pitch(self, change):
-         """
+        """
         计算机器人炮塔旋转角的变化
         ：param change：旋转角的变化量
         """
         self.pitch += change
 
     def change_buff(self, change):
-        self.buff = change
         """
         :param buff:加成效果
         0->buff,1->回血，2->弹药补给，3->禁止移动
         """
+        self.buff = change
+
+    def covered_area(self):
+        """
+        计算机器人的投影面积
+        点旋转计算公式：
+        srx = (x-pointx)*cos(angle) + (y-pointy)*sin(angle)+pointx
+        sry = (y-pointy)*cos(angle) - (x-pointx)*sin(angle)+pointy
+        nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
+        nry = (x-pointx)*sin(angle) + (y-pointy)*cos(angle)+pointy
+        :param MAP: map地图
+        :return:
+        """
+        L = 300 # 中心距边长的值
+        # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标
+        if self.angle >= 0:
+            self.peak[0] = math.ceil(-L * math.acos(self.angle) + L*math.asin(self.angle)) + self.x
+            self.peak[1] = math.ceil(L * math.acos(self.angle) -(-L * math.asin(self.angle)) ) + self.y
+            self.peak[2] = math.ceil(L * math.cos(self.angle) + L * math.asin(self.angle)) + self.x
+            self.peak[3] = math.ceil(L * math.acos(self.angle) - L * math.asin(self.angle)) + self.y
+            self.peak[4] = math.ceil(L * math.acos(self.angle) + (-L * math.sin(self.angle))) + self.x
+            self.peak[5] = math.ceil(-L * math.acos(self.angle) - L * math.asin(self.angle)) + self.y
+            self.peak[6] = math.ceil(-L * math.acos(self.angle) + (-L * math.asin(self.angle))) + self.x
+            self.peak[7] = math.ceil(-L * math.acos(self.angle) - (-L * math.asin(self.angle))) + self.y
+        elif self.angle < 0:
+            self.peak[0] = math.ceil(-L * math.acos(self.angle) - L * math.asin(self.angle)) + self.x
+            self.peak[1] = math.ceil(L * math.acos(self.angle) + (-L * math.asin(self.angle))) + self.y
+            self.peak[2] = math.ceil(L * math.cos(self.angle) - L * math.asin(self.angle)) + self.x
+            self.peak[3] = math.ceil(L * math.acos(self.angle) + L * math.asin(self.angle)) + self.y
+            self.peak[4] = math.ceil(L * math.acos(self.angle) - (-L * math.sin(self.angle))) + self.x
+            self.peak[5] = math.ceil(-L * math.acos(self.angle) + L * math.asin(self.angle)) + self.y
+            self.peak[6] = math.ceil(-L * math.acos(self.angle) - (-L * math.asin(self.angle))) + self.x
+            self.peak[7] = math.ceil(-L * math.acos(self.angle) + (-L * math.asin(self.angle))) + self.y
+
