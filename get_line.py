@@ -56,7 +56,7 @@ def judge_fuc(x1, y1, x2, y2, xp, yp):
         fy = (xp - x1) * k + y1
         dx = 0.99
         dy = (xp + dx -x1) * k + y1
-        if yp == int(fy) or yp == int(dy):
+        if yp == int(fy) or (yp > int(fy) and yp <= int(dy)):
             # print(xp,yp,fy,dy)
             return True
         else:
@@ -70,7 +70,9 @@ if __name__ == '__main__':
     import numpy as np
     import cv2
     x = np.zeros((1000,1000))
-    for p,q in get_lines(300,400,400,400):
+    list = get_lines(300,400,120,123)
+    print(list)
+    for p,q in list:
         x[p][q] = 255
     cv2.namedWindow('image')
     cv2.imshow('image',x)
