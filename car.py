@@ -16,6 +16,9 @@ class CAR(object):
         self.buff = buff            # 禁区buff
         self.peak = peak            # 小车顶点数组
         self.inSight = [0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
+        self.carLength = 600        # 纵向长度
+        self.carWidth = 450         # 横向长度
+        self.armors = [(),(),(),(),(),(),(),()]    # 装甲板相对小车中心距离
 
     def v_punishment(self, v):
         """
