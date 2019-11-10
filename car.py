@@ -3,8 +3,9 @@ import math
 
 
 class CAR(object):
-    def __init__(self, bullet, angle, yaw, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
+    def __init__(self, team, bullet, angle, yaw, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
+        self.team = 0               # 0为红方，1为蓝方
         self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.hp = hp                # 小车血量
         self.bullet = bullet        # 子弹数
@@ -97,6 +98,7 @@ class CAR(object):
         ：param change：地盘绝对角度的变化量
         """
         self.angle += change
+        return self.angle
 
     def change_yaw(self, change):
         """
@@ -130,24 +132,15 @@ class CAR(object):
         :param MAP: map地图
         :return:
         """
-        L = 300 # 中心距边长的值
+        L = self.carLength / 2 # 中心距边长的值
+        W = self.carWidth / 2
         # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标
-        if self.angle >= 0:
-            self.peak[0] = math.ceil(-L * math.acos(self.angle) + L*math.asin(self.angle)) + self.x
-            self.peak[1] = math.ceil(L * math.acos(self.angle) -(-L * math.asin(self.angle)) ) + self.y
-            self.peak[2] = math.ceil(L * math.cos(self.angle) + L * math.asin(self.angle)) + self.x
-            self.peak[3] = math.ceil(L * math.acos(self.angle) - L * math.asin(self.angle)) + self.y
-            self.peak[4] = math.ceil(L * math.acos(self.angle) + (-L * math.sin(self.angle))) + self.x
-            self.peak[5] = math.ceil(-L * math.acos(self.angle) - L * math.asin(self.angle)) + self.y
-            self.peak[6] = math.ceil(-L * math.acos(self.angle) + (-L * math.asin(self.angle))) + self.x
-            self.peak[7] = math.ceil(-L * math.acos(self.angle) - (-L * math.asin(self.angle))) + self.y
-        elif self.angle < 0:
-            self.peak[0] = math.ceil(-L * math.acos(self.angle) - L * math.asin(self.angle)) + self.x
-            self.peak[1] = math.ceil(L * math.acos(self.angle) + (-L * math.asin(self.angle))) + self.y
-            self.peak[2] = math.ceil(L * math.cos(self.angle) - L * math.asin(self.angle)) + self.x
-            self.peak[3] = math.ceil(L * math.acos(self.angle) + L * math.asin(self.angle)) + self.y
-            self.peak[4] = math.ceil(L * math.acos(self.angle) - (-L * math.sin(self.angle))) + self.x
-            self.peak[5] = math.ceil(-L * math.acos(self.angle) + L * math.asin(self.angle)) + self.y
-            self.peak[6] = math.ceil(-L * math.acos(self.angle) - (-L * math.asin(self.angle))) + self.x
-            self.peak[7] = math.ceil(-L * math.acos(self.angle) + (-L * math.asin(self.angle))) + self.y
+        self.peak[0] = ((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[1] = ((self.peak[0] - self.x) * math.sin(self.angle) + ((self.peak[1] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[2] = ((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[3] = ((self.peak[2] - self.x) * math.sin(self.angle) + ((self.peak[3] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[4] = ((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[5] = ((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[6] = ((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[7] = ((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
 
