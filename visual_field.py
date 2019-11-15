@@ -4,8 +4,8 @@ from car import CAR
 from map import MAP
 
 C = MAP()
-A = CAR(50,0,0,0)
-B = CAR(50,0,0,0)
+A = CAR(50,0,0,0,0,0)
+B = CAR(50,0,0,0,0,0)
 
 
 def angle_calculate(x, y):
