@@ -13,7 +13,6 @@ class car_move:
         self.ful_img = img
         self.rect = rect
         self.speed = speed
-        self.num = 0
 
     # 当按下键盘时，移动机器人
     def update(self, screen, press_keys):
