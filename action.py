@@ -7,7 +7,7 @@ M = MAP()
 
 class ACTION(object):  # cover_area, barrier_start, barrier_end, area_start, area_end
 
-  def __init__(self, x, y):
+def __init__(self, x, y):
     self.x = x
     self.y = y
 
@@ -42,7 +42,6 @@ def is_inter(p1, p2, p3, p4):
             and max(p1.y, p2.y) >= min(p3.y, p4.y)  # 矩形1最高端大于矩形最低端
             and max(p3.y, p4.y) >= min(p1.y, p2.y)):  # 矩形2最高端大于矩形最低端
 
-        # 若通过快速排斥则进行跨立实验
         if (cross(p1, p2, p3) * cross(p1, p2, p4) <= 0
                 and cross(p3, p4, p1) * cross(p3, p4, p2) <= 0):
             flag = 1
@@ -51,6 +50,7 @@ def is_inter(p1, p2, p3, p4):
     else:
         flag = 0
     return flag
+
 
 
 def on_area():

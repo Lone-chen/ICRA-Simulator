@@ -3,7 +3,7 @@ import math
 
 
 class CAR(object):
-    def __init__(self, team, bullet, angle, yaw, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
+    def __init__(self, team, bullet, angle, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = 0               # 0为红方，1为蓝方
         self.HEAT_FREEZE = -120     # 每秒冷却速度
@@ -13,7 +13,8 @@ class CAR(object):
         self.x = local[0]           # 横坐标
         self.y = local[1]           # 纵坐标
         self.angle = angle          # 绝对角度
-        self.yaw = yaw              # 炮台水平角度
+        # self.yaw = yaw
+        self.pitch = pitch          # 炮台水平角度
         self.buff = buff            # 禁区buff
         self.peak = peak            # 小车顶点数组
         self.inSight = [0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
