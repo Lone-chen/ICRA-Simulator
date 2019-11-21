@@ -25,8 +25,13 @@ screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
 # 设置窗口标题
 pygame.display.set_caption("map")
 
+# clock对象
+clock = pygame.time.Clock()
+
 while True:
     screen.fill((110, 123, 139))
+
+    time_passed = clock.tick()
 
     for i in range(0, 510):
         for j in range(0, 810):
@@ -69,3 +74,5 @@ while True:
             exit()
 
     pygame.display.update()
+
+
