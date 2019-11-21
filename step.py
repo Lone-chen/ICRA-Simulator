@@ -30,4 +30,7 @@ class state(object):
 
 
 class action(object):
+    object.x = 0  # 0-810
+    object.y = 0  # 0-510
+    object.fire = 0  # 0:不发射，1：发射
 
