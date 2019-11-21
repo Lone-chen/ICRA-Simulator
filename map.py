@@ -10,12 +10,13 @@ class MAP(object):
 
         self.barrier_start = ([0, 100], [150, 242], [150, 410], [360, 100], [360, 385], [635, 0], [580, 242], [710, 385])  # 障碍物左上角坐标(B1-B4,B6-B9)
         self.barrier_end = ([100, 125], [230, 267], [175, 510], [440, 125], [440, 410], [660, 100], [660, 267], [810, 410])  # 障碍物右上角坐标(B1-B4,B6-B9)
-        self.area_start = ([23, 150], [733, 312], [163, 292], [593, 169], [373, 27], [373, 435])  # 加成区/禁区左上角坐标
-        self.area_end = ([77, 198], [787, 360], [217, 340], [647, 217], [427, 75], [427, 483])  # 加成区/禁区右下角坐标
+        self.area_start = ([23, 150], [163, 292], [373, 27], [733, 312], [593, 169], [373, 435])  # 加成区/禁区左上角坐标
+        self.area_end = ([77, 198], [217, 340], [427, 75], [787, 360], [647, 217], [427, 483])  # 加成区/禁区右下角坐标
         self.map_initialization()
+        self.areas_rand()
         self.map_barriers()
         self.map_areas()
-        self.areas_rand()
+
 
 
     def map_initialization(self):  # 将地图的每一个像素格对应的数组元素初始化为0
@@ -69,8 +70,8 @@ class MAP(object):
 
     def map_areas(self):  # 将不同区域对应的数组元素赋值为2-7（6个不同功能区域）
         for i in range(6):
-            for m in range(self.area_start[self.areas[i] - 2][1] , self.area_end[self.areas[i] - 2][1]):
-                for n in range(self.area_start[self.areas[i] - 2][0] , self.area_end[self.areas[i] - 2][0]):
+            for m in range(self.area_start[i][1] , self.area_end[i][1]):
+                for n in range(self.area_start[i][0] , self.area_end[i][0]):
                     if self.areas[i] == 2:
                         self.map[m][n] = 2  # 红方回血区
 
@@ -90,4 +91,5 @@ class MAP(object):
                         self.map[m][n] = 7  # 禁止射击区
 
 
-
+mp = MAP()
+print(mp.areas)
