@@ -2,10 +2,11 @@ import math
 import random
 from car import CAR
 from map import MAP
+import get_line
 
 C = MAP()
-A = CAR(50,0,0,0,0,0)
-B = CAR(50,0,0,0,0,0)
+A = CAR(50,0,0,0,0)
+B = CAR(50,0,0,0,0)
 
 
 def angle_calculate(x, y):
@@ -26,85 +27,10 @@ def barrier_visual(x,y,x_car,y_car):
     :param (x_car, y_car): 小车坐标
     :return: 0 或 1
     """
-    X, Y = abs(x - x_car), abs(y - y_car)
-    n = []
-    m = []
-    # 小车和光条在同一行的情况
-    if y == y_car:
-        if x_car < x:
-            for i in range(x_car + 1, x + 1):
-                if C.map[y][i] == 1:
-                    return 1
-        # 小车在光条左边
-        if x_car > x:
-            for i in range(x + 1, x_car + 1):
-                if C.map[y][i] == 1:
-                    return 1
-        # 小车在光条右边
-
-    # 小车光条下方的情况
-    elif y < y_car:
-        # 小车在光条右下方
-        if x < x_car:
-            n[x], m[x] = y, y
-            for i in range(x + 1, x_car + 2):
-                if i == x + 1 or i == x_car + 1:
-                    n[i] = n[i - 1] + 0.5 * Y / X
-                else:
-                    n[i] = n[i - 1] + Y / X
-                m[i] = round(n[i])
-                for j in range(m[i-1], m[i] + 1):
-                    if C.map[j][i - 1] == 1:
-                        return 1
-        # 小车在光条左下方
-        if x > x_car:
-            n[x_car], m[x_car] = y_car, y_car
-            for i in range(x_car + 1, x + 2):
-                if i == x_car + 1 or i == x + 1:
-                    n[i] = n[i - 1] - 0.5 * Y / X
-                else:
-                    n[i] = n[i - 1] - Y / X
-                m[i] = round(n[i])
-                for j in range(m[i], m[i - 1] + 1):
-                    if C.map[j][i - 1] == 1:
-                        return 1
-        # 小车在光条正下方
-        if x == x_car:
-            for i in range(y, y_car + 1):
-                if C.map[i][x] == 1:
-                    return 1
-
-    # 小车光条上方的情况
-    else:
-        # 小车在光条右上方
-        if x < x_car:
-            n[x], m[x] = y, y
-            for i in range(x + 1, x_car + 2):
-                if i == x + 1 or i == x_car + 1:
-                    n[i] = n[i - 1] - 0.5 * Y / X
-                else:
-                    n[i] = n[i - 1] - Y / X
-                m[i] = round(n[i])
-                for j in range(m[i], m[i - 1] + 1):
-                    if C.map[j][i - 1] == 1:
-                        return 1
-        # 小车在光条左上方
-        if x > x_car:
-            n[x_car], m[x_car] = y_car, y_car
-            for i in range(x_car + 1, x + 2):
-                if i == x_car + 1 or i == x + 1:
-                    n[i] = n[i - 1] + 0.5 * Y / X
-                else:
-                    n[i] = n[i - 1] + Y / X
-                m[i] = round(n[i])
-                for j in range(m[i - 1], m[i] + 1):
-                    if C.map[j][i - 1] == 1:
-                        return 1
-        # 小车在光条正上方
-        if x == x_car:
-            for i in range(y_car, y + 1):
-                if C.map[i][x] == 1:
-                    return 1
+    list = get_line.get_lines(x, y, x_car, y_car)
+    for i, j in list:
+        if C.map[i][j] == 1:
+            return 1
     return 0  # 光条未被障碍物阻挡则返回0
 
 
@@ -165,4 +91,3 @@ def attack(A, B):
         i = random.randint(1, 2)
         if i == 1:
             A.attacked(0, 0)
-

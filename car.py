@@ -1,6 +1,4 @@
-from map import MAP
 import math
-
 
 class CAR(object):
     def __init__(self, team, bullet, angle, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
@@ -101,12 +99,14 @@ class CAR(object):
         self.angle += change
         return self.angle
 
+    '''
     def change_yaw(self, change):
         """
         计算机器人炮塔仰角的变化
         ：param change：仰角的变化量
         """
         self.yaw += change
+    '''
 
     def change_pitch(self, change):
         """
@@ -144,4 +144,6 @@ class CAR(object):
         self.peak[5] = ((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
         self.peak[6] = ((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
         self.peak[7] = ((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
+
+
 
