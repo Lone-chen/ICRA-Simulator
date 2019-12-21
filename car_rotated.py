@@ -4,35 +4,50 @@ from pygame.locals import *
 from sys import exit
 from car import CAR
 
-#初始化car，后面的列表为车的初始位置
-car = CAR(0, 50, 0, 0, 0, [400, 250, 445, 250, 400, 190, 445, 190])
-
+# 初始化car，后面的列表为车的初始位置
+car = CAR(0, 50, 0,  0, [400, 250, 445, 250, 400, 190, 445, 190])
+print(car.peak)
 # 加载车的模型图象，在文件夹image中
-car_image = 'image/chassis_g.png'
+chassis_image = 'image/chassis_g.png'
+# gimbal_image = 'image/gimbal_g.png'
 
 pygame.init()
 
 screen = pygame.display.set_mode((810, 510), 0, 32)
 pygame.display.set_caption("Car_control")
+_angle_ = 0
+_angle_a = 0
+
+chassis_module = pygame.image.load(chassis_image)
+chassisRect = chassis_module.get_rect()
+chassisRect = chassisRect.move((810 - chassisRect.width) / 2, (510 - chassisRect.height) / 2)
+screen.blit(chassis_module, (car.peak[0], car.peak[1]))
+
 
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
+        if event.type == KEYDOWN:
+            if event.key == K_RIGHT:
+                _angle_ = -math.radians(1)
+            if event.key == K_LEFT:
+                _angle_ = math.radians(1)
+            if event.key == K_UP:
+                _angle_a = _angle_a + math.radians(1)
+            if event.key == K_DOWN:
+                _angle_a = _angle_a - math.radians(1)
+        if event.type == KEYUP:
+            _angle_ = 0
 
     screen.fill((127, 127, 127))
-    # 加载图象
-    car_module = pygame.image.load(car_image)
-    screen.blit(car_module, (car.peak[0], car.peak[1]))
-    # 输入当前角度
-    _angle_ = int(input())
     # 计算变换的角度
-    car.angle = car.change_angle(_angle_)
+    car.angle = car.change_angle(_angle_ + _angle_a)
     # 旋转图象
-    car_module = pygame.transform.rotate(car_module, car.angle)
+    new_chassis_module = pygame.transform.rotate(chassis_module, car.angle)
+    newRect = new_chassis_module.get_rect(center=chassisRect.center)
     car.covered_area()
-    # print(car.peak[0], car.peak[1], car.peak[2], car.peak[3])
-    screen.fill((127, 127, 127))
-    screen.blit(car_module, (car.peak[0], car.peak[1]))
 
+    screen.fill((127, 127, 127))
+    screen.blit(new_chassis_module, newRect)
     pygame.display.update()

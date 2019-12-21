@@ -136,14 +136,14 @@ class CAR(object):
         L = self.carLength / 2 # 中心距边长的值
         W = self.carWidth / 2
         # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标
-        self.peak[0] = ((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y)*math.sin(self.angle))) + self.x
-        self.peak[1] = ((self.peak[0] - self.x) * math.sin(self.angle) + ((self.peak[1] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[2] = ((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y)*math.sin(self.angle))) + self.x
-        self.peak[3] = ((self.peak[2] - self.x) * math.sin(self.angle) + ((self.peak[3] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[4] = ((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y)*math.sin(self.angle))) + self.x
-        self.peak[5] = ((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[6] = ((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
-        self.peak[7] = ((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[0] = int((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[1] = int((self.peak[0] - self.x) * math.sin(self.angle) + ((self.peak[1] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[2] = int((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[3] = int((self.peak[2] - self.x) * math.sin(self.angle) + ((self.peak[3] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[4] = int((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[5] = int((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
 
 
 
