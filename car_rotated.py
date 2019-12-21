@@ -21,7 +21,7 @@ _angle_a = 0
 chassis_module = pygame.image.load(chassis_image)
 chassisRect = chassis_module.get_rect()
 chassisRect = chassisRect.move((810 - chassisRect.width) / 2, (510 - chassisRect.height) / 2)
-screen.blit(chassis_module, (car.peak[0], car.peak[1]))
+screen.blit(chassis_module, chassisRect)
 
 
 while True:
