@@ -8,8 +8,8 @@ class MAP(object):
         self.map = []       # 存放地图信息,初始化全部为0
         self.areas = [2, 3, 4, 5, 6, 7]     # 判定区域为加成区（红/蓝）/禁区
 
-        self.barrier_start = ([0, 100], [150, 242], [150, 410], [360, 100], [360, 385], [635, 0], [580, 242], [710, 385])  # 障碍物左上角坐标(B1-B4,B6-B9)
-        self.barrier_end = ([100, 125], [230, 267], [175, 510], [440, 125], [440, 410], [660, 100], [660, 267], [810, 410])  # 障碍物右上角坐标(B1-B4,B6-B9)
+        self.barrier_start = ([0, 100], [150, 242], [150, 410], [350, 100], [350, 385], [635, 0], [580, 242], [710, 385])  # 障碍物左上角坐标(B1-B4,B6-B9)
+        self.barrier_end = ([100, 125], [230, 267], [175, 510], [450, 125], [450, 410], [660, 100], [660, 267], [810, 410])  # 障碍物右上角坐标(B1-B4,B6-B9)
         self.area_start = ([23, 150], [163, 292], [373, 27], [733, 312], [593, 169], [373, 435])  # 加成区/禁区左上角坐标
         self.area_end = ([77, 198], [217, 340], [427, 75], [787, 360], [647, 217], [427, 483])  # 加成区/禁区右下角坐标
         self.map_initialization()
@@ -23,8 +23,8 @@ class MAP(object):
         l=[]
         x,y=1,1
 
-        while x <= 510:  # 5100行
-            while y <= 810:  # 8100列
+        while x <= 510:  # 510行
+            while y <= 810:  # 810列
                 l.append(0)
                 y = y + 1
             self.map.append(l)
@@ -66,6 +66,12 @@ class MAP(object):
         for i in range(0, 15):
             for j in range(390 + i, 419 - i):
                 self.map[i + 255][j] = 1
+        for i in range(0, 6):
+            for j in range(404 - i, 405 + i):
+                self.map[i + 249][j] = 8
+        for i in range(0, 6):
+            for j in range(399 + i, 410 - i):
+                self.map[i + 255][j] = 8
 
 
     def map_areas(self):  # 将不同区域对应的数组元素赋值为2-7（6个不同功能区域）
@@ -91,5 +97,4 @@ class MAP(object):
                         self.map[m][n] = 7  # 禁止射击区
 
 
-mp = MAP()
-print(mp.areas)
+
