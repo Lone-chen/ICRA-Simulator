@@ -200,7 +200,7 @@ def run_game():
         screen.blit(text4_surface, (198, 38))
         screen.blit(text6_surface, (198, 56))
         screen.blit(text8_surface, (198, 74))
-        screen.blit(text10_surface, (208, 92))
+        screen.blit(text10_surface, (207, 92))
 
         pygame.display.update()
 

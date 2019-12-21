@@ -97,5 +97,4 @@ class MAP(object):
                         self.map[m][n] = 7  # 禁止射击区
 
 
-mp = MAP()
-print(mp.areas)
+
