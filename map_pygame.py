@@ -11,7 +11,6 @@ A = map.MAP()
 class Ship():
     def __init__(self, screen):
         """初始化"""
-        self.angle = 0
         self.begin_angle1 = math.atan(2/3)
         self.begin_angle2 = math.atan(3/2)
         self.screen = screen
@@ -19,6 +18,9 @@ class Ship():
         self.y = [0, 0, 0, 0]
         self.l = math.sqrt(20*20 + 30*30)
         # 加载图像
+        self.newimage = pygame.image.load('image/gimbal_g.png')
+        self.newgimimage = pygame.image.load('image/gimbal_g.png')
+        self.new_gimimage = pygame.image.load('image/gimbal_g.png')
         self.gimimage = pygame.image.load('image/gimbal_g.png')
         self.image = pygame.image.load('image/chassis_g.png')
         self.gim_rect = self.gimimage.get_rect()
@@ -41,6 +43,11 @@ class Ship():
         self.acel_down = 0
         # 障碍物碰撞控制
         self.barrairs = True
+        # 加速度控制
+        self.angle = 0
+        self.gimangle = 0
+        self._angle_a = 0
+        self.gim_angle_a = 0
 
     def judeg(self):
         self.barrairs = True
@@ -61,6 +68,8 @@ class Ship():
         return self.barrairs
 
     def update(self):
+        self.angle += self._angle_a
+        self.gimangle += self.gim_angle_a
         if self.moving_right and self.rect.right < self.screen_rect.right:
             self.rect.centerx += self.acel_right
             self.gim_rect.centerx += self.acel_right
@@ -85,10 +94,16 @@ class Ship():
             if self.judeg() == False:
                 self.rect.centery += self.acel_up
                 self.gim_rect.centery += self.acel_up
+        self.newimage = pygame.transform.rotate(self.image, self.angle)
+        self.rect = self.newimage.get_rect(center=self.rect.center)
+        self.newgimimage = pygame.transform.rotate(self.gimimage, self.angle)
+        self.gim_rect = self.newgimimage.get_rect(center=self.gim_rect.center)
+        self.new_gimimage = pygame.transform.rotate(self.newgimimage, self.gimangle)
+        self.gim_rect = self.new_gimimage.get_rect(center=self.gim_rect.center)
 
     def blitme(self):
-        self.screen.blit(self.image, self.rect)
-        self.screen.blit(self.gimimage, self.gim_rect)
+        self.screen.blit(self.newimage, self.rect)
+        self.screen.blit(self.new_gimimage, self.gim_rect)
 
 
 def check_event(ship):
@@ -113,6 +128,14 @@ def check_event(ship):
                 ship.acel_right -= 1
             elif event.key == pygame.K_d:
                 ship.acel_right += 1
+            elif event.key == K_h:
+                ship.gim_angle_a = ship.gim_angle_a - math.radians(100)
+            elif event.key == K_f:
+                ship.gim_angle_a = ship.gim_angle_a + math.radians(100)
+            elif event.key == K_t:
+                ship._angle_a = ship._angle_a + math.radians(100)
+            elif event.key == K_g:
+                ship._angle_a = ship._angle_a - math.radians(100)
 
         elif event.type == KEYUP:
             if event.key == pygame.K_RIGHT:
@@ -123,6 +146,7 @@ def check_event(ship):
                 ship.moving_up = False
             elif event.key == pygame.K_DOWN:
                 ship.moving_down = False
+            ship._angle_ = 0
 
 
 def run_game():
@@ -147,6 +171,8 @@ def run_game():
     text5_surface = font.render("  X  : ", True, (255, 255, 255))
     text7_surface = font.render("  Y  : ", True, (255, 255, 255))
     text9_surface = font.render("judge: ", True, (255, 255, 255))
+    text11_surface = font.render("angle: ", True, (255, 255, 255))
+    text13_surface = font.render("gim_angle: ", True, (255, 255, 255))
 
     while True:
         screen.fill((110, 123, 139))
@@ -191,16 +217,22 @@ def run_game():
         screen.blit(text5_surface, (150, 56))
         screen.blit(text7_surface, (150, 74))
         screen.blit(text9_surface, (150, 92))
+        screen.blit(text11_surface, (150, 110))
+        screen.blit(text13_surface, (110, 128))
         text2_surface = font.render(str(car.acel_right), True, (255, 255, 255))
         text4_surface = font.render(str(car.acel_up), True, (255, 255, 255))
         text6_surface = font.render(str(car.rect.centerx), True, (255, 255, 255))
         text8_surface = font.render(str(car.rect.centery), True, (255, 255, 255))
         text10_surface = font.render(str(car.barrairs), True, (255, 255, 255))
+        text12_surface = font.render(str(round(car.angle, 2)), True, (255, 255, 255))
+        text14_surface = font.render(str(round(car.gimangle, 2)), True, (255, 255, 255))
         screen.blit(text2_surface, (198, 20))
         screen.blit(text4_surface, (198, 38))
         screen.blit(text6_surface, (198, 56))
         screen.blit(text8_surface, (198, 74))
         screen.blit(text10_surface, (207, 92))
+        screen.blit(text12_surface, (207, 110))
+        screen.blit(text14_surface, (207, 128))
 
         pygame.display.update()
 
