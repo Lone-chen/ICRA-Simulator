@@ -1,7 +1,7 @@
 import math
 
 class CAR(object):
-    def __init__(self, team, bullet, angle, pitch, peak, buff=0, hp=2000, heat=0, local=(300, 300)):
+    def __init__(self, team, bullet, angle, pitch, hpbuff=0, bulletbuff=0, debuff=0, hp=2000, heat=0, local=(300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = 0               # 0为红方，1为蓝方
         self.HEAT_FREEZE = -120     # 每秒冷却速度
@@ -13,8 +13,10 @@ class CAR(object):
         self.angle = angle          # 绝对角度
         # self.yaw = yaw
         self.pitch = pitch          # 炮台水平角度
-        self.buff = buff            # 禁区buff
-        self.peak = peak            # 小车顶点数组
+        self.hpbuff = hpbuff        # 加血buff
+        self.bulletbuff = bulletbuff  # 补弹buff
+        self.debuff = debuff            # 禁区buff时间
+        self.peak = self.get_peak() # 小车顶点数组
         self.inSight = [0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
         self.carLength = 600        # 纵向长度
         self.carWidth = 450         # 横向长度
@@ -99,15 +101,6 @@ class CAR(object):
         self.angle += change
         return self.angle
 
-    '''
-    def change_yaw(self, change):
-        """
-        计算机器人炮塔仰角的变化
-        ：param change：仰角的变化量
-        """
-        self.yaw += change
-    '''
-
     def change_pitch(self, change):
         """
         计算机器人炮塔旋转角的变化
@@ -121,6 +114,12 @@ class CAR(object):
         0->buff,1->回血，2->弹药补给，3->禁止移动
         """
         self.buff = change
+    def get_peak(self):
+        peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
+                self.x + self.carWidth / 2, self.y - self.carLength / 2,
+                self.x + self.carWidth / 2, self.y + self.carLength / 2,
+                self.x - self.carWidth / 2, self.y + self.carLength / 2]
+        return peak
 
     def covered_area(self):
         """
