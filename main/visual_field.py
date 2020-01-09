@@ -1,8 +1,8 @@
 import math
 import random
-from car import CAR
-from map import MAP
-import get_line
+from main.car import CAR
+from main.map import MAP
+import main.get_line
 
 C = MAP()
 A = CAR(50,0,0,0,0)
@@ -27,7 +27,7 @@ def barrier_visual(x,y,x_car,y_car):
     :param (x_car, y_car): 小车坐标
     :return: 0 或 1
     """
-    list = get_line.get_lines(x, y, x_car, y_car)
+    list = main.get_line.get_lines(x, y, x_car, y_car)
     for i, j in list:
         if C.map[i][j] == 1:
             return 1

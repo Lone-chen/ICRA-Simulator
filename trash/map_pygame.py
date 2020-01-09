@@ -1,9 +1,11 @@
-import sys, pygame
-import map
-import get_line
+import sys
+import pygame
+from pygame.locals import *
+import main.map
+import main.get_line
 import math
 
-A = map.MAP()
+A = main.map.MAP()
 
 class Ship():
     def __init__(self, screen):
@@ -15,11 +17,11 @@ class Ship():
         self.y = [0, 0, 0, 0]
         self.l = math.sqrt(20*20 + 30*30)
         # 加载图像
-        self.newimage = pygame.image.load('image/gimbal_g.png')
-        self.newgimimage = pygame.image.load('image/gimbal_g.png')
-        self.new_gimimage = pygame.image.load('image/gimbal_g.png')
-        self.gimimage = pygame.image.load('image/gimbal_g.png')
-        self.image = pygame.image.load('image/chassis_g.png')
+        self.newimage = pygame.image.load('../image/gimbal_g.png')
+        self.newgimimage = pygame.image.load('../image/gimbal_g.png')
+        self.new_gimimage = pygame.image.load('../image/gimbal_g.png')
+        self.gimimage = pygame.image.load('../image/gimbal_g.png')
+        self.image = pygame.image.load('../image/chassis_g.png')
         self.gim_rect = self.gimimage.get_rect()
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
@@ -58,7 +60,7 @@ class Ship():
         self.y[3] = self.rect.centery + math.sin(self.begin_angle2 - self.angle) * self.l
         for i in range(0, 4):
             for j in range(i + 1, 4):
-                list = get_line.get_lines(int(self.x[i]), int(self.y[i]), int(self.x[j]), int(self.y[j]))
+                list = main.get_line.get_lines(int(self.x[i]), int(self.y[i]), int(self.x[j]), int(self.y[j]))
                 for p, q in list:
                     if p>0 and p<810 and q>0 and q<510 and A.map[q][p] == 1:
                         self.barrairs = False
@@ -151,13 +153,13 @@ def run_game():
     SCREEN_SIZE = (810, 510)
     screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
     pygame.display.set_caption("map")
-    R1 = pygame.image.load("image/1.png").convert()
-    R2 = pygame.image.load("image/2.png").convert()
-    F = pygame.image.load("image/3.png").convert()
-    B1 = pygame.image.load("image/4.png").convert()
-    B1_ = pygame.image.load("image/4_.png").convert()
-    B2 = pygame.image.load("image/5.png").convert()
-    B3 = pygame.image.load("image/7.png").convert()
+    R1 = pygame.image.load("../image/1.png").convert()
+    R2 = pygame.image.load("../image/2.png").convert()
+    F = pygame.image.load("../image/3.png").convert()
+    B1 = pygame.image.load("../image/4.png").convert()
+    B1_ = pygame.image.load("../image/4_.png").convert()
+    B2 = pygame.image.load("../image/5.png").convert()
+    B3 = pygame.image.load("../image/7.png").convert()
     # clock对象
     clock = pygame.time.Clock()
     car = Ship(screen)
