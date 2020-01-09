@@ -91,5 +91,5 @@ if __name__ == "__main__":
     r_car = Rect(0, 0, 70, 70)
     pygame.init()
     clock = pygame.time.Clock()
-    carr = pygame.image.load('PycharmProjects/ICRA-Simulator/image/chassis_g.png').convert_alpha()
+    carr = pygame.image.load('../image/chassis_g.png').convert_alpha()
     Andr = car_move(carr, r_car, speed_car)

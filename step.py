@@ -3,8 +3,8 @@ import random, time, threading
 from main.map import MAP
 import main.rewardfunction
 
-car1 = CAR(0, 0, 0, 0, 0)
-car2 = CAR(1, 0, 0, 0, 0)
+car1 = CAR(0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0])
+car2 = CAR(1, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0])
 M = MAP()
 
 
@@ -13,7 +13,7 @@ def cross(p1, p2, p3):
     跨立实验,判断对角线顶点是否相交叉
     :param p1:
     :param p2:
-    :param p3:
+    :param p3:                                           
     :return:
     """
     x1 = p2[0] - p1[0]
@@ -84,6 +84,7 @@ class action(object):
         self.x = 0  # 0-810
         self.y = 0  # 0-510
         self.fire = 0  # 0:不发射，1：发射
+        # 需添加对另一种输入格式的处理，用以得到最终的observation
 
 
 A = action()

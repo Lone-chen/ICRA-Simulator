@@ -1,7 +1,7 @@
 from main.car import CAR
 from main.map import MAP
 
-C = CAR(0, 0, 0, 0, 0)
+C = CAR(0, 0, 0, 0, [25, 50, 70, 50, 70, 110, 25, 110])
 M = MAP()
 
 
@@ -27,7 +27,7 @@ def is_inter(p1, p2, p3, p4):
     :param p2: L1_2
     :param p3: L2_1
     :param p4: L2_2
-    :return:
+    :return: flag
     """
     # 快速排斥，以l1、l2为对角线的矩形必相交，否则两线段不相交
     if (max(p1[0], p2[0]) >= min(p3[0], p4[0])  # 矩形1最右端大于矩形2最左端
@@ -50,15 +50,21 @@ def on_area():
     判断是否接触到障碍区或buff区
     :return:
     """
-    for i in range(9):
-        if (is_inter(C.peak[0], C.peak[2], M.barrier_start[i], M.barrier_end[i])
-                and is_inter(C.peak[1], C.peak[3], M.barrier_start[i], M.barrier_end[i])):
+    for i in range(8):
+        if (is_inter([C.peak[0], C.peak[1]], [C.peak[6], C.peak[7]], M.barrier_start[i], M.barrier_end[i])
+                and is_inter([C.peak[2], C.peak[3]], [C.peak[4], C.peak[5]], M.barrier_start[i], M.barrier_end[i])):
             # 遇到障碍物，改变速度
             pass
 
-    for i in range(6):
-        if (is_inter(C.peak[0], C.peak[2], M.area_start[i], M.area_end[i])
-                and is_inter(C.peak[1], C.peak[3], M.area_start[i], M.area_end[i])):
+    for i in range(5):
+        if (is_inter([C.peak[0], C.peak[1]], [C.peak[6], C.peak[7]], M.area_start[i], M.area_end[i])
+                and is_inter([C.peak[2], C.peak[3]], [C.peak[4], C.peak[5]], M.area_start[i], M.area_end[i])):
             # 遇到buff
             pass
+
+for i in range(8):
+    if (is_inter([C.peak[0], C.peak[1]], [C.peak[6], C.peak[7]], M.barrier_start[i], M.barrier_end[i])
+            and is_inter([C.peak[2], C.peak[3]], [C.peak[4], C.peak[5]], M.barrier_start[i], M.barrier_end[i])):
+        # 遇到障碍物，改变速度
+        pass
 

@@ -1,4 +1,4 @@
-import pygame
+import sys, pygame
 import math
 from pygame.locals import *
 from sys import exit
