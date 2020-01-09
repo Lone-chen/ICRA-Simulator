@@ -8,7 +8,7 @@ from main.car import CAR
 car = CAR(0, 50, 0,  0, [400, 250, 445, 250, 400, 190, 445, 190])
 print(car.peak)
 # 加载车的模型图象，在文件夹image中
-chassis_image = 'image/chassis_g.png'
+chassis_image = '../image/chassis_g.png'
 # gimbal_image = 'image/gimbal_g.png'
 
 pygame.init()
