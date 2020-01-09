@@ -1,8 +1,5 @@
-import os, sys, pygame
-from pygame.locals import *
-from sys import exit
+import sys, pygame
 import map
-import visual_field
 import get_line
 import math
 
@@ -165,14 +162,14 @@ def run_game():
     clock = pygame.time.Clock()
     car = Ship(screen)
     # 字体显示
-    font = pygame.font.SysFont("simsunnsimsun", 25)
-    text1_surface = font.render(" V_x : ", True, (255, 255, 255))
-    text3_surface = font.render(" V_y : ", True, (255, 255, 255))
-    text5_surface = font.render("  X  : ", True, (255, 255, 255))
-    text7_surface = font.render("  Y  : ", True, (255, 255, 255))
+    font = pygame.font.SysFont("simsunnsimsun", 16)
+    text1_surface = font.render("V_x : ", True, (255, 255, 255))
+    text3_surface = font.render("V_y : ", True, (255, 255, 255))
+    text5_surface = font.render("X  : ", True, (255, 255, 255))
+    text7_surface = font.render("Y  : ", True, (255, 255, 255))
     text9_surface = font.render("judge: ", True, (255, 255, 255))
     text11_surface = font.render("angle: ", True, (255, 255, 255))
-    text13_surface = font.render("gim_angle: ", True, (255, 255, 255))
+    text13_surface = font.render("  gim_angle: ", True, (255, 255, 255))
 
     while True:
         screen.fill((110, 123, 139))

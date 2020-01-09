@@ -89,6 +89,7 @@ class action(object):
 A = action()
 B = state(car1.hp, car1.bullet, car1.heat, car1.pitch, car1.x, car1.y, car2.hp, car2.bullet, car2.heat, car2.pitch, car2.x, car2.y)
 
+
 def step(A, B, B_primer):
     done = 0
     imformation = 0
