@@ -34,9 +34,9 @@ while True:
             if event.key == K_LEFT:
                 _angle_ = math.radians(1) % 360
             if event.key == K_UP:
-                _angle_a = (_angle_a + math.radians(1) % 360)
+                _angle_a = (_angle_a + math.radians(1)) % 360
             if event.key == K_DOWN:
-                _angle_a = (_angle_a - math.radians(1) % 360)
+                _angle_a = (_angle_a - math.radians(1)) % 360
         if event.type == KEYUP:
             _angle_ = 0
 
