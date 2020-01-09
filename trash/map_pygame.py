@@ -1,4 +1,5 @@
-import sys, pygame
+import sys
+import py
 import main.map
 import main.get_line
 import math
