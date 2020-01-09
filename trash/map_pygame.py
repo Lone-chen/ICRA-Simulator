@@ -1,9 +1,9 @@
 import sys, pygame
-import map
-import get_line
+import main.map
+import main.get_line
 import math
 
-A = map.MAP()
+A = main.map.MAP()
 
 class Ship():
     def __init__(self, screen):

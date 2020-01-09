@@ -1,7 +1,7 @@
-from car import CAR
+from main.car import CAR
 import random, time, threading
-from map import MAP
-import rewardfunction
+from main.map import MAP
+import main.rewardfunction
 
 car1 = CAR(0, 0, 0, 0, 0)
 car2 = CAR(1, 0, 0, 0, 0)
@@ -177,7 +177,7 @@ def step(A, B, B_primer):
     B.time = B.time - 0.1
     #  比赛剩余时间
 
-    r = rewardfunction.reward(B_primer, B)
+    r = main.rewardfunction.reward(B_primer, B)
 
     if B.time == 0:
         done = 1

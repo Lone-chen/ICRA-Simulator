@@ -2,7 +2,7 @@ import pygame
 import math
 from pygame.locals import *
 from sys import exit
-from car import CAR
+from main.car import CAR
 
 # 初始化car，后面的列表为车的初始位置
 car = CAR(0, 50, 0,  0, [400, 250, 445, 250, 400, 190, 445, 190])
@@ -31,7 +31,6 @@ while True:
         if event.type == KEYDOWN:
             if event.key == K_RIGHT:
                 _angle_ = -math.radians(1) % 360
-                ans(1)
             if event.key == K_LEFT:
                 _angle_ = math.radians(1) % 360
             if event.key == K_UP:

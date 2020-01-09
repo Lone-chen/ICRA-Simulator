@@ -1,5 +1,5 @@
-from car import CAR
-from map import MAP
+from main.car import CAR
+from main.map import MAP
 
 C = CAR(0, 0, 0, 0, 0)
 M = MAP()
