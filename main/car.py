@@ -1,10 +1,15 @@
 import math
 import random
+from main.map import MAP
+import main.get_line
+import main.action
+import main.visual_judge
+
 
 class CAR(object):
     def __init__(self, team, bullet, angle, pitch, hpbuff=0, bulletbuff=0, debuff=0, hp=2000, heat=0, local=(300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
-        self.team = team               # 0为红方，1为蓝方
+        self.team = team            # 0为红方，1为蓝方
         self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.hp = hp                # 小车血量
         self.bullet = bullet        # 子弹数
@@ -27,9 +32,11 @@ class CAR(object):
         self.carLength = 600  # 纵向长度
         self.carWidth = 450  # 横向长度
         self.peak = self.get_peak() # 小车顶点数组
-        self.inSight = [0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
-        self.armors = [(),(),(),(),(),(),(),()]    # 装甲板相对小车中心距离
-        self.resite_data = [local[0], local[1], angle, pitch]
+        self.inSight = [0, 0, 0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
+        self.armors = [[], [], [], [], [], [], [], []]    # 装甲板相对小车中心距离,前后左右
+        self.reset_data = [local[0], local[1], angle, pitch]
+        self.v = 20                 # 子弹发射速度
+        self.w_vel = math.pi        # 炮台旋转速度
 
     def v_punishment(self, v):
         """
@@ -48,16 +55,16 @@ class CAR(object):
     def attacked(self,attacked,crash):
         """
         计算冲击扣除血量
-        ：param attacked：被击中的装甲编号 0->正面装甲 1->侧面装甲 2->背面装甲
+        ：param attacked：被击中的装甲编号 0->正面装甲 1->背面装甲 2->侧面装甲
         : param crash: 装甲撞击到护栏的次数
         """
         change = 0
         if attacked == 0:
             change += -20 -10*crash
         elif attacked == 1:
-            change += -40 -10*crash
-        elif attacked == 2:
             change += -60 -10*crash
+        elif attacked == 2:
+            change += -40 -10*crash
         self.hp += change
 
     def change_bullet(self, change):
@@ -123,6 +130,7 @@ class CAR(object):
         0->buff,1->回血，2->弹药补给，3->禁止移动
         """
         self.buff = change
+
     def get_peak(self):
         peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
                 self.x + self.carWidth / 2, self.y - self.carLength / 2,
@@ -153,40 +161,39 @@ class CAR(object):
         self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
         self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
 
-    def resite(self):
+    def reset(self):
         """
         重置小车属性
         :return:
         """
         self.hp = 2000
-        self.x = self.resite_data[0]
-        self.y = self.resite_data[1]
+        self.x = self.reset_data[0]
+        self.y = self.reset_data[1]
         self.bullet = 50
         self.heat = 0
-        self.angle = self.resite_data[2]
-        self.pitch = self.resite_data[3]
+        self.angle = self.reset_data[2]
+        self.pitch = self.reset_data[3]
         self.hpbuff = 0
         self.bulletbuff = 0
         self.debuff = 0
         self.peak = self.get_peak()
         self.inSight = [0, 0]
-        self.armors = [(),(),(),(),(),(),(),()]
+        self.armors = [[], [], [], [], [], [], [], []]
         self.line_speed = 0
         self.angular_speed = 0
         self.line_acel = 0
         self.angular_speed = 0
+        self.mp = MAP()
 
-    def change_location(self, l_acel, angle_acel):
+    def change_location(self, l_speed, angle_speed):
         """
 
-        :param l_acel: 小车的线加速度
-        :param angle_acel: 小车的角加速度
+        :param l_acel: 小车的线速度
+        :param angle_acel: 小车的角速度
         :return:
         """
-        self.x =
-        self.y =
-        self.line_acel = l_acel
-        self.angular_acel = angle_acel
+        self.x = 0
+        self.y = 0
         self.line_speed += self.line_acel * self.T
         self.angular_speed +=  self.angular_speed * self.T
 
@@ -196,7 +203,57 @@ class CAR(object):
         else:
             return 0
 
+    def visual_field(self, A):
+        """
+        判断小车装甲板是否在视野内
+        :param A: 一个小车对象
+        :return: 哪个光条被看见
+        """
+        m = []
+        for i in range(0, 8):
+            for j in range(0, 4):
+                m[i] = main.action.is_inter(A.peak[j], A.peak[j+1], A.armors[i], [self.x, self.y])
+                if m[i] == 1:
+                    break
 
-car = CAR(0, 50, 0, 0)
-car.change_bullet(-20)
-print(car.bullet)
+        if m[0] == 0 and m[1] == 0 and main.visual_judge.visual(A.armors[0][0], A.armors[0][1], A.armors[1][0], A.armors[1][1], self.x, self.y, self.angle, self.pitch):
+            self.inSight[0] = 1
+        if m[2] == 0 and m[3] == 0 and main.visual_judge.visual(A.armors[2][0], A.armors[2][1], A.armors[3][0], A.armors[3][1], self.x, self.y, self.angle, self.pitch):
+            self.inSight[1] = 1
+        if m[4] == 0 and m[5] == 0 and main.visual_judge.visual(A.armors[4][0], A.armors[4][1], A.armors[5][0], A.armors[5][1], self.x, self.y, self.angle, self.pitch):
+            self.inSight[2] = 1
+        if m[6] == 0 and m[7] == 0 and main.visual_judge.visual(A.armors[6][0], A.armors[6][1], A.armors[7][0], A.armors[7][1], self.x, self.y, self.angle, self.pitch):
+            self.inSight[3] = 1
+
+        if self.inSight[1] == 1:
+            return 2
+        if self.inSight[2] == 1:
+            return 3
+        if self.inSight[3] == 1:
+            return 3
+        if self.inSight[0] == 1:
+            return 1
+        return 0
+
+    def attack(self, carx):
+        """
+        攻击判定函数
+        """
+        xA = self.visual_field(carx)
+        self.change_bullet(-1)  # A子弹减少
+        self.change_heat(self.v)  # A枪口热量增加
+        if xA == 0:  # A不能看见B
+            self.change_pitch(0)  # A炮台旋转角不变
+        else:
+            self.change_pitch(0)  # A炮台旋转角不变
+            carx.attacked(xA - 1, 0)
+
+    def aiming(self, carx):
+        if carx.isdetected or max(carx.inSight):
+            dir_angle = math.atan2(carx.y - self.y, carx.x - self.x) - self.angle
+            if abs(dir_angle - self.angle) > self.w_vel:
+                self.angle += dir_angle / abs(dir_angle) * self.w_vel
+            else:
+                self.angle += dir_angle
+
+
