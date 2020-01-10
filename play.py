@@ -48,6 +48,9 @@ class ver_env(object):
         sB = observation()
         self.carA.change_location(actionA.linear_vel, actionA.angle_vel, actionA.w)
         self.carB.change_location(actionB.linear_vel, actionB.angle_vel, actionA.w)
+        self.carA.get_isdetected()
+        self.carB.get_isdetected()
+
         sA.myx = self.carA.x
         sA.myy = self.carA.y
         sA.mytheta = self.carA.angle
@@ -55,12 +58,32 @@ class ver_env(object):
         sA.myanglevel = self.carA.angular_speed
         sA.enemyx = self.get_car_x(self.carB)
         sA.enemyy = self.get_car_y(self.carB)
+        sA.detected = self.carB.isdetected
+        sA.canattack = self.carA.visual_field(self.carB)
+        sA.myfire = self.Afire
+
+        sB.myx = self.carB.x
+        sB.myy = self.carB.y
+        sB.mytheta = self.carB.angle
+        sB.mylinearvel = self.carB.line_speed
+        sB.myanglevel = self.carB.angular_speed
+        sB.enemyx = self.get_car_x(self.carA)
+        sB.enemyy = self.get_car_y(self.carA)
+        sB.detected = self.carA.isdetected
+        sB.canattack = self.carB.visual_field(self.carA)
+        sB.myfire = self.Bfire
 
         if actionA.fire == 1:
             self.carA.attack(self.carB)
             self.Afire = 1
         else:
             self.Afire = 0
+
+        if actionB.fire == 1:
+            self.carB.attack(self.carA)
+            self.Bfire = 1
+        else:
+            self.Bfire = 0
 
     def get_car_x(self, carx):
         if carx.isdected == 1 and carx.canattack == 1:
