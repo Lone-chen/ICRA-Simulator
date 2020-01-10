@@ -1,9 +1,10 @@
 import math
+import random
 
 class CAR(object):
     def __init__(self, team, bullet, angle, pitch, hpbuff=0, bulletbuff=0, debuff=0, hp=2000, heat=0, local=(300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
-        self.team = 0               # 0为红方，1为蓝方
+        self.team = team               # 0为红方，1为蓝方
         self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.hp = hp                # 小车血量
         self.bullet = bullet        # 子弹数
@@ -11,16 +12,24 @@ class CAR(object):
         self.x = local[0]           # 横坐标
         self.y = local[1]           # 纵坐标
         self.angle = angle          # 绝对角度
+        self.line_acel = 0          # 线加速度
+        self.angular_acel = 0       # 角加速度
+        self.line_speed = 0         # 线速度
+        self.angular_speed = 0      # 角速度
+        self.carLength = 600        # 纵向长度
+        self.carWidth = 450         # 横向长度
         # self.yaw = yaw
         self.pitch = pitch          # 炮台水平角度
         self.hpbuff = hpbuff        # 加血buff
         self.bulletbuff = bulletbuff  # 补弹buff
         self.debuff = debuff            # 禁区buff时间
+        self.isdetected = self.get_isdetected()         # 小车是否被敌方观察到
+        self.carLength = 600  # 纵向长度
+        self.carWidth = 450  # 横向长度
         self.peak = self.get_peak() # 小车顶点数组
         self.inSight = [0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
-        self.carLength = 600        # 纵向长度
-        self.carWidth = 450         # 横向长度
         self.armors = [(),(),(),(),(),(),(),()]    # 装甲板相对小车中心距离
+        self.resite_data = [local[0], local[1], angle, pitch]
 
     def v_punishment(self, v):
         """
@@ -144,5 +153,50 @@ class CAR(object):
         self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
         self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
 
+    def resite(self):
+        """
+        重置小车属性
+        :return:
+        """
+        self.hp = 2000
+        self.x = self.resite_data[0]
+        self.y = self.resite_data[1]
+        self.bullet = 50
+        self.heat = 0
+        self.angle = self.resite_data[2]
+        self.pitch = self.resite_data[3]
+        self.hpbuff = 0
+        self.bulletbuff = 0
+        self.debuff = 0
+        self.peak = self.get_peak()
+        self.inSight = [0, 0]
+        self.armors = [(),(),(),(),(),(),(),()]
+        self.line_speed = 0
+        self.angular_speed = 0
+        self.line_acel = 0
+        self.angular_speed = 0
+
+    def change_location(self, l_acel, angle_acel):
+        """
+
+        :param l_acel: 小车的线加速度
+        :param angle_acel: 小车的角加速度
+        :return:
+        """
+        self.x =
+        self.y =
+        self.line_acel = l_acel
+        self.angular_acel = angle_acel
+        self.line_speed += self.line_acel * self.T
+        self.angular_speed +=  self.angular_speed * self.T
+
+    def get_isdetected(self):
+        if random.random() >= 0.7:
+            return 1
+        else:
+            return 0
 
 
+car = CAR(0, 50, 0, 0)
+car.change_bullet(-20)
+print(car.bullet)

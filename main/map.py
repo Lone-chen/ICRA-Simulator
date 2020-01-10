@@ -3,8 +3,8 @@ import random
 class MAP(object):
     def __init__(self):
         # 地图单位像素大小为1mm×1mm
-        self.length = 8100  # 地图横向长度
-        self.width = 5100   # 地图纵向长度
+        self.length = 808  # 地图横向长度
+        self.width = 448   # 地图纵向长度
         self.map = []       # 存放地图信息,初始化全部为0
         self.areas = [2, 3, 4, 5, 6, 7]     # 判定区域为加成区（红/蓝）/禁区
         self.initial_start = ([0, 0], [0, 355], [708, 355], [708, 0])    # 起始区左上角坐标,逆时针方向
@@ -24,8 +24,8 @@ class MAP(object):
         l=[]
         x,y=1,1
 
-        while x <= 510:  # 510行
-            while y <= 810:  # 810列
+        while x <= self.width:  # 448行
+            while y <= self.length:  # 808列
                 l.append(0)
                 y = y + 1
             self.map.append(l)

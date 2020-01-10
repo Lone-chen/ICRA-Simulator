@@ -10,7 +10,7 @@ def reward(s, s_):
     # enemy_hp
     enemy_hp_a1 = 15
     enemy_hp_a2 = 20
-    if s_.enemyhp >= 500:
+    if s_.enemy_hp >= 500:
         f_enemy_hp = -1 * (s_.enemyhp - s.myhp) * enemy_hp_a1
     else:
         f_enemy_hp = -1 * (s_.enemyhp - s.myhp) * enemy_hp_a2
@@ -26,23 +26,23 @@ def reward(s, s_):
     else:
         f_check = 0
 
-    # my_hp_addition    对应     mybuff_hp
+    # my_hp_addition
     my_hp_addition_a1 = 200
-    if s_.time % 60 >= 20 and s.mybuff_hp == 0 and s_.mybuff_hp == 1:
+    if s_.time % 60 >= 20 and s.my_hp_addition == 0 and s_.my_hp_addition == 1:
         f_my_hp_addition = my_hp_addition_a1
     else:
         f_my_hp_addition = 0
 
-    # my_bullet_addition  对应  mybuff_bullet
+    # my_bullet_addition
     my_bullet_addition_a1 = 200
-    if s.mybuff_bullet == 0 and s_.mybuff_bullet == 1:
+    if s.my_bullet_addition == 0 and s_.my_bullet_addition == 1:
         f_my_bullet_addition = my_bullet_addition_a1
     else:
         f_my_bullet_addition = 0
 
-    # my_forbidden   禁止区名称不符    对应 mydebuff
+    # my_forbidden
     my_forbidden_a1 = -200
-    if s.my_forbidde == 0 and s_.my_forbidden == 1:
+    if s.my_forbidden == 0 and s_.my_forbidden == 1:
         f_my_forbidden = my_forbidden_a1
 
     # enemy_hp_addition

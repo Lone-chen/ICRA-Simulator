@@ -234,7 +234,7 @@ def run_game():
         screen.blit(text14_surface, (207, 128))
 
         pygame.display.update()
-
+print(A.areas)
 run_game()
 
 
