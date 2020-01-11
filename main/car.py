@@ -22,10 +22,12 @@ class CAR(object):
 
         self.v = 20                 # 子弹发射速度
         self.w_vel = math.pi        # 炮台旋转速度
-        self.line_acel = 0          # 线加速度
-        self.angular_acel = 0       # 角加速度
+        self.line_speed_xmax = 0    # x轴最大线速度
+        self.line_speed_ymax = 0    # y轴最大速度
+        self.angular_speed_max = 0  # 最大角速度
         self.line_speed = 0         # 线速度
         self.angular_speed = 0      # 角速度
+
 
         self.carLength = 600            # 小车纵向长度
         self.carWidth = 450             # 小车横向长度
@@ -280,3 +282,28 @@ class CAR(object):
         if main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], [404, 207], [404, 241]):
                 return 1
         return 0
+
+    def change_location(self, l_v, angle_v):
+        """
+        :param l_v: 小车的线速度
+        :param angle_v: 小车的角速度
+        :return:
+        """
+        self.line_speed[0] = l_v[0]
+        self.line_speed[1] = l_v[1]
+        self.angular_speed = angle_v
+        if self.line_speed[0] >= self.line_speed_xmax:
+            self.line_speed[0] = self.line_speed_xmax
+        if self.line_speed[1] >= self.line_speed_ymax:
+            self.line_speed[1] = self.line_speed_ymax
+        if self.angular_speed >= self.angular_speed_max:
+            self.angular_speed = self.angular_speed_max
+        v_x = (self.line_speed[0]) * math.cos(self.angle + self.angular_speed * self.T) - \
+              (self.line_speed[1]) * math.sin(self.angle + self.angular_speed * self.T)
+        v_y = (self.line_speed[0]) * math.sin(self.angle + self.angular_speed * self.T) + \
+              (self.line_speed[1]) * math.cos(self.angle + self.angular_speed * self.T)
+        self.x = (self.line_speed[0] * (math.sin(self.T * self.angular_speed + self.angle) - math.sin(self.angle)) +
+                    self.line_speed[1] * (math.cos(self.T * self.angular_speed + self.angle) - math.cos(self.angle))) / self.angular_speed
+        self.y = (self.line_speed[0] * (math.sin(self.T * self.angular_speed + self.angle) - math.sin(self.angle)) -
+                    self.line_speed[1] * (math.cos(self.T * self.angular_speed + self.angle) - math.cos(self.angle))) / self.angular_speed
+        self.angle += self.angular_speed * self.T
