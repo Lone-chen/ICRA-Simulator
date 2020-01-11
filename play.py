@@ -1,7 +1,7 @@
 from main.car import CAR
 from main.input_output import observation,action
 from main.map import MAP
-import main.rewardfunction
+import main.rewardfunction as rf
 import random
 import math
 
@@ -14,7 +14,12 @@ class ver_env(object):
         self.Afire = 0
         self.Bfire = 0
         self.time = 1800
+        self.done = 0
+        self.inf = -10000
         self.build_match()
+        self.chufa = [0, 0, 0, 0, 0, 0]
+        self.old_sA = observation()
+        self.old_sB = observation()
 
 
     def build_match(self):
@@ -27,6 +32,7 @@ class ver_env(object):
         self.Afire = 0
         self.Bfire = 0
         self.time = 1800
+        self.done = 0
         sA = observation(self.carA.hp, self.carA.bullet, self.carA.heat, self.Afire,
                          self.carA.pitch, self.carA.debuff, self.carA.x, self.carA.y,
                          self.carA.line_speed, self.carA.angular_speed,
@@ -39,9 +45,12 @@ class ver_env(object):
                          self.carA.hp, self.carA.bullet,self.carA.heat,
                          self.get_car_x(self.carA), self.get_car_y(self.carA),
                          self.carA.isdetected, 0, self.time)
+        self.old_sA = sA
+        self.old_sB = sB
         return sA.get_observation(), sB.get_observation()
 
     def step(self, actionA, actionB):
+        # 未定义碰撞
         actionA = action(actionA)
         actionB = action(actionB)
         sA = observation()
@@ -85,6 +94,24 @@ class ver_env(object):
         else:
             self.Bfire = 0
 
+        self.check_on_buff(self.carA)
+        self.check_on_buff(self.carB)
+
+        rA = rf.reward(self.old_sA, sA)
+        rB = rf.reward(self.old_sA, sA)
+        if self.carA.on_barriers() == 1:
+            self.done = 1
+            rA = self.inf
+        if self.carB.on_barriers() == 1:
+            self.done = 1
+            rB = self.inf
+        if self.time == 0:
+            self.done = 1
+        self.old_sA = sA
+        self.old_sB = sB
+        self.time -= 1
+        return sA.get_observation(), rA, sB.get_observation(), rB, self.done
+
     def get_car_x(self, carx):
         if carx.isdected == 1 and carx.canattack == 1:
             return carx.x
@@ -99,3 +126,5 @@ class ver_env(object):
             return carx.y + 250 * random.uniform(-0.03, 0.03)
         else:
             return -1
+    def check_on_buff(self, carx):
+        pass
