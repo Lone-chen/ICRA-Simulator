@@ -127,6 +127,13 @@ class CAR(object):
         self.pitch += change
 
     def get_peak(self):
+        peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
+                self.x + self.carWidth / 2, self.y - self.carLength / 2,
+                self.x + self.carWidth / 2, self.y + self.carLength / 2,
+                self.x - self.carWidth / 2, self.y + self.carLength / 2]
+        return peak
+
+    def cover_area(self):
         """
         计算机器人的投影面积
         点旋转计算公式：
@@ -146,7 +153,6 @@ class CAR(object):
         self.peak[5] = int((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
         self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y) * math.sin(self.angle))) + self.x
         self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
-        return self.peak
 
     def reset(self):
         """
