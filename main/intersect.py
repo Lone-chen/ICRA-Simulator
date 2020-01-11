@@ -45,21 +45,6 @@ def is_inter(p1, p2, p3, p4):
     return flag
 
 
-def on_area():
-    """
-    判断是否接触到障碍区或buff区
-    :return:
-    """
-    for i in range(8):
-        if (is_inter([C.peak[0], C.peak[1]], [C.peak[6], C.peak[7]], M.barrier_start[i], M.barrier_end[i])
-                and is_inter([C.peak[2], C.peak[3]], [C.peak[4], C.peak[5]], M.barrier_start[i], M.barrier_end[i])):
-            # 遇到障碍物，改变速度
-            pass
 
-    for i in range(5):
-        if (is_inter([C.peak[0], C.peak[1]], [C.peak[6], C.peak[7]], M.area_start[i], M.area_end[i])
-                and is_inter([C.peak[2], C.peak[3]], [C.peak[4], C.peak[5]], M.area_start[i], M.area_end[i])):
-            # 遇到buff
-            pass
 
 
