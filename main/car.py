@@ -11,33 +11,36 @@ class CAR(object):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = team            # 0为红方，1为蓝方
         self.mp = mp                # 地图属性
-        self.HEAT_FREEZE = -120     # 每秒冷却速度
+
         self.hp = hp                # 小车血量
         self.bullet = bullet        # 子弹数
         self.heat = heat            # 枪管热量
         self.x = local[0]           # 横坐标
         self.y = local[1]           # 纵坐标
+        self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.angle = angle          # 绝对角度
+
+        self.v = 20                 # 子弹发射速度
+        self.w_vel = math.pi        # 炮台旋转速度
         self.line_acel = 0          # 线加速度
         self.angular_acel = 0       # 角加速度
         self.line_speed = 0         # 线速度
         self.angular_speed = 0      # 角速度
-        self.carLength = 600        # 纵向长度
-        self.carWidth = 450         # 横向长度
-        # self.yaw = yaw
-        self.pitch = pitch          # 炮台水平角度
-        self.hpbuff = hpbuff        # 加血buff
-        self.bulletbuff = bulletbuff  # 补弹buff
+
+        self.carLength = 600            # 小车纵向长度
+        self.carWidth = 450             # 小车横向长度
+        self.pitch = pitch              # 炮台水平角度
+        self.peak = self.get_peak()     # 小车顶点数组
+
+        self.hpbuff = hpbuff            # 加血buff
+        self.bulletbuff = bulletbuff    # 补弹buff
         self.debuff = debuff            # 禁区buff时间
-        self.isdetected = self.get_isdetected()         # 小车是否被敌方观察到
-        self.carLength = 600  # 纵向长度
-        self.carWidth = 450  # 横向长度
-        self.peak = self.get_peak() # 小车顶点数组
-        self.inSight = [0, 0, 0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
-        self.armors = [[], [], [], [], [], [], [], []]    # 装甲板相对小车中心距离,前后左右
-        self.reset_data = [local[0], local[1], angle, pitch]
-        self.v = 20                 # 子弹发射速度
-        self.w_vel = math.pi        # 炮台旋转速度
+
+        self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
+        self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
+        self.armors = [[], [], [], [], [], [], [], []]      # 装甲板相对小车中心距离,前后左右
+
+        self.reset_data = [local[0], local[1], angle, pitch]    # 保存输入的初始值
 
     def v_punishment(self, v):
         """
@@ -83,23 +86,22 @@ class CAR(object):
             if (self.heat > 240) and (self.heat < 360):
                 burned = -4 * (self.heat - 240)
                 self.hp += burned
-                # 计算正常血量下每周期扣除血量
             elif self.heat >= 360:
                 burned = -40 * (self.heat - 360)
                 self.hp += burned
                 self.heat = 360
             self.heat = max(0, self.heat + self.HEAT_FREEZE * self.T)
+            # 计算正常血量下每周期扣除血量
         else:
             if (self.heat > 240) and (self.heat < 360):
                 burned = -4 * (self.heat - 240)
                 self.hp += burned
-                self.heat += 2 * self.HEAT_FREEZE * self.T
-                # 计算低血量（hp少于400）下每周期扣除血量
             elif self.heat >= 360:
                 burned = -40 * (self.heat - 360)
                 self.hp += burned
                 self.heat = 360
             self.heat = max(0, self.heat + 2 * self.HEAT_FREEZE * self.T)
+            # 计算低血量（hp少于400）下每周期扣除血量
 
     def change_local(self, change):
         """
@@ -125,13 +127,6 @@ class CAR(object):
         self.pitch += change
 
     def get_peak(self):
-        peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
-                self.x + self.carWidth / 2, self.y - self.carLength / 2,
-                self.x + self.carWidth / 2, self.y + self.carLength / 2,
-                self.x - self.carWidth / 2, self.y + self.carLength / 2]
-        return peak
-
-    def covered_area(self):
         """
         计算机器人的投影面积
         点旋转计算公式：
@@ -140,19 +135,18 @@ class CAR(object):
         nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
         nry = (x-pointx)*sin(angle) + (y-pointy)*cos(angle)+pointy
         :param MAP: map地图
-        :return:
+        :return:顶点坐标数组peak
         """
-        L = self.carLength / 2 # 中心距边长的值
-        W = self.carWidth / 2
         # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标，顺时针
-        self.peak[0] = int((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[0] = int((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y) * math.sin(self.angle))) + self.x
         self.peak[1] = int((self.peak[0] - self.x) * math.sin(self.angle) + ((self.peak[1] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[2] = int((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[2] = int((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y) * math.sin(self.angle))) + self.x
         self.peak[3] = int((self.peak[2] - self.x) * math.sin(self.angle) + ((self.peak[3] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[4] = int((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[4] = int((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y) * math.sin(self.angle))) + self.x
         self.peak[5] = int((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y) * math.sin(self.angle))) + self.x
         self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
+        return self.peak
 
     def reset(self):
         """

@@ -1,5 +1,6 @@
 import random
 
+
 class MAP(object):
     def __init__(self):
         # 地图单位像素大小为1mm×1mm
