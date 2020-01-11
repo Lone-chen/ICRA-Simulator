@@ -1,5 +1,6 @@
 import random
 
+
 class MAP(object):
     def __init__(self):
         # 地图单位像素大小为1mm×1mm
@@ -61,19 +62,12 @@ class MAP(object):
             for m in range(self.barrier_start[i][1] , self.barrier_end[i][1]):
                 for n in range(self.barrier_start[i][0] , self.barrier_end[i][0]):
                     self.map[m][n] = 1
-        for i in range(0, 15):
+        for i in range(0, 18):
             for j in range(404 - i, 405 + i):
-                self.map[i + 240][j] = 1
-        for i in range(0, 15):
-            for j in range(390 + i, 419 - i):
-                self.map[i + 255][j] = 1
-        for i in range(0, 6):
-            for j in range(404 - i, 405 + i):
-                self.map[i + 249][j] = 8
-        for i in range(0, 6):
-            for j in range(399 + i, 410 - i):
-                self.map[i + 255][j] = 8
-
+                self.map[i + 206][j] = 1
+        for i in range(0, 18):
+            for j in range(387 + i, 422 - i):
+                self.map[i + 224][j] = 1
 
     def map_areas(self):  # 将不同区域对应的数组元素赋值为2-7（6个不同功能区域）
         for i in range(6):

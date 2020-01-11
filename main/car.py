@@ -2,41 +2,45 @@ import math
 import random
 from main.map import MAP
 import main.get_line
-import main.action
+import main.intersect
 import main.visual_judge
 
 
 class CAR(object):
-    def __init__(self, team, bullet, angle, pitch, hpbuff=0, bulletbuff=0, debuff=0, hp=2000, heat=0, local=(300, 300)):
+    def __init__(self, team, bullet, angle, pitch, mp, hpbuff = 0, bulletbuff = 0, debuff = 0, hp = 2000, heat = 0, local = (300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = team            # 0为红方，1为蓝方
-        self.HEAT_FREEZE = -120     # 每秒冷却速度
+        self.mp = mp                # 地图属性
+
         self.hp = hp                # 小车血量
         self.bullet = bullet        # 子弹数
         self.heat = heat            # 枪管热量
         self.x = local[0]           # 横坐标
         self.y = local[1]           # 纵坐标
+        self.HEAT_FREEZE = -120     # 每秒冷却速度
         self.angle = angle          # 绝对角度
+
+        self.v = 20                 # 子弹发射速度
+        self.w_vel = math.pi        # 炮台旋转速度
         self.line_acel = 0          # 线加速度
         self.angular_acel = 0       # 角加速度
         self.line_speed = 0         # 线速度
         self.angular_speed = 0      # 角速度
-        self.carLength = 600        # 纵向长度
-        self.carWidth = 450         # 横向长度
-        # self.yaw = yaw
-        self.pitch = pitch          # 炮台水平角度
-        self.hpbuff = hpbuff        # 加血buff
-        self.bulletbuff = bulletbuff  # 补弹buff
+
+        self.carLength = 600            # 小车纵向长度
+        self.carWidth = 450             # 小车横向长度
+        self.pitch = pitch              # 炮台水平角度
+        self.peak = self.get_peak()     # 小车顶点数组
+
+        self.hpbuff = hpbuff            # 加血buff
+        self.bulletbuff = bulletbuff    # 补弹buff
         self.debuff = debuff            # 禁区buff时间
-        self.isdetected = self.get_isdetected()         # 小车是否被敌方观察到
-        self.carLength = 600  # 纵向长度
-        self.carWidth = 450  # 横向长度
-        self.peak = self.get_peak() # 小车顶点数组
-        self.inSight = [0, 0, 0, 0]       # 敌方车辆是否在视野内 0->不在 1->在
-        self.armors = [[], [], [], [], [], [], [], []]    # 装甲板相对小车中心距离,前后左右
-        self.reset_data = [local[0], local[1], angle, pitch]
-        self.v = 20                 # 子弹发射速度
-        self.w_vel = math.pi        # 炮台旋转速度
+
+        self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
+        self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
+        self.armors = [[], [], [], [], [], [], [], []]      # 装甲板相对小车中心距离,前后左右
+
+        self.reset_data = [local[0], local[1], angle, pitch]    # 保存输入的初始值
 
     def v_punishment(self, v):
         """
@@ -52,19 +56,21 @@ class CAR(object):
             punishment = -200
         self.hp += punishment
 
-    def attacked(self,attacked,crash):
+    def attacked(self, attacked, crash):
         """
         计算冲击扣除血量
-        ：param attacked：被击中的装甲编号 0->正面装甲 1->背面装甲 2->侧面装甲
+        ：param attacked：被击中的装甲编号 1->正面装甲 2->背面装甲 3->侧面装甲
         : param crash: 装甲撞击到护栏的次数
         """
         change = 0
-        if attacked == 0:
-            change += -20 -10*crash
-        elif attacked == 1:
-            change += -60 -10*crash
+        if attacked == 1:
+            change += -20 - 10*crash
         elif attacked == 2:
-            change += -40 -10*crash
+            change += -60 - 10*crash
+        elif attacked == 3:
+            change += -40 - 10*crash
+        elif attacked == 0:
+            change += - 10*crash
         self.hp += change
 
     def change_bullet(self, change):
@@ -80,34 +86,30 @@ class CAR(object):
             if (self.heat > 240) and (self.heat < 360):
                 burned = -4 * (self.heat - 240)
                 self.hp += burned
-                self.heat += self.HEAT_FREEZE * self.T
-                # 计算正常血量下每周期扣除血量
             elif self.heat >= 360:
                 burned = -40 * (self.heat - 360)
                 self.hp += burned
                 self.heat = 360
-            else:
-                self.heat = max(0, self.heat + self.HEAT_FREEZE * self.T)
+            self.heat = max(0, self.heat + self.HEAT_FREEZE * self.T)
+            # 计算正常血量下每周期扣除血量
         else:
             if (self.heat > 240) and (self.heat < 360):
                 burned = -4 * (self.heat - 240)
                 self.hp += burned
-                self.heat += 2 * self.HEAT_FREEZE * self.T
-                # 计算低血量（hp少于400）下每周期扣除血量
             elif self.heat >= 360:
                 burned = -40 * (self.heat - 360)
                 self.hp += burned
                 self.heat = 360
-            else:
-                self.heat = max(0, self.heat + 2 * self.HEAT_FREEZE * self.T)
+            self.heat = max(0, self.heat + 2 * self.HEAT_FREEZE * self.T)
+            # 计算低血量（hp少于400）下每周期扣除血量
 
     def change_local(self, change):
         """
         计算机器人坐标的变化
         ：param change：x、y坐标的变化量
         """
-        self.x += change(0)
-        self.y += change(1)
+        self.x += change[0]
+        self.y += change[1]
 
     def change_angle(self, change):
         """
@@ -124,13 +126,6 @@ class CAR(object):
         """
         self.pitch += change
 
-    def change_buff(self, change):
-        """
-        :param buff:加成效果
-        0->buff,1->回血，2->弹药补给，3->禁止移动
-        """
-        self.buff = change
-
     def get_peak(self):
         peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
                 self.x + self.carWidth / 2, self.y - self.carLength / 2,
@@ -138,7 +133,7 @@ class CAR(object):
                 self.x - self.carWidth / 2, self.y + self.carLength / 2]
         return peak
 
-    def covered_area(self):
+    def cover_area(self):
         """
         计算机器人的投影面积
         点旋转计算公式：
@@ -147,18 +142,16 @@ class CAR(object):
         nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
         nry = (x-pointx)*sin(angle) + (y-pointy)*cos(angle)+pointy
         :param MAP: map地图
-        :return:
+        :return:顶点坐标数组peak
         """
-        L = self.carLength / 2 # 中心距边长的值
-        W = self.carWidth / 2
         # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标，顺时针
-        self.peak[0] = int((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[0] = int((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y) * math.sin(self.angle))) + self.x
         self.peak[1] = int((self.peak[0] - self.x) * math.sin(self.angle) + ((self.peak[1] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[2] = int((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[2] = int((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y) * math.sin(self.angle))) + self.x
         self.peak[3] = int((self.peak[2] - self.x) * math.sin(self.angle) + ((self.peak[3] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[4] = int((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[4] = int((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y) * math.sin(self.angle))) + self.x
         self.peak[5] = int((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y)*math.sin(self.angle))) + self.x
+        self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y) * math.sin(self.angle))) + self.x
         self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
 
     def reset(self):
@@ -212,7 +205,7 @@ class CAR(object):
         m = []
         for i in range(0, 8):
             for j in range(0, 4):
-                m[i] = main.action.is_inter(A.peak[j], A.peak[j+1], A.armors[i], [self.x, self.y])
+                m[i] = main.intersect.is_inter(A.peak[j], A.peak[j + 1], A.armors[i], [self.x, self.y])
                 if m[i] == 1:
                     break
 
@@ -246,9 +239,13 @@ class CAR(object):
             self.change_pitch(0)  # A炮台旋转角不变
         else:
             self.change_pitch(0)  # A炮台旋转角不变
-            carx.attacked(xA - 1, 0)
+            carx.attacked(xA, 0)
 
     def aiming(self, carx):
+        """
+        炮台移动锁定
+        :param carx: 一个小车对象
+        """
         if carx.isdetected or max(carx.inSight):
             dir_angle = math.atan2(carx.y - self.y, carx.x - self.x) - self.angle
             if abs(dir_angle - self.angle) > self.w_vel:
@@ -256,4 +253,30 @@ class CAR(object):
             else:
                 self.angle += dir_angle
 
+    def on_buff(self):
+        """
+        buff区判定函数
+        :return: 对应buff区的编号,若未踩到buff区则返回0
+        """
+        for i in range(0, 6):
+            if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
+                or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.area_start[i], self.mp.area_end[i])
+                    or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
+                        or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]], self.mp.area_start[i], self.mp.area_end[i])):
+                return self.mp.area[i]
+        return 0
 
+    def on_barriers(self):
+        """
+        判断是否碰到障碍物
+        :return: 0为未碰到,1为碰到
+        """
+        for i in range(0, 8):
+            if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], self.mp.barrier_start[i], self.mp.barrier_start[i])
+                or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.barrier_start[i], self.mp.barrier_start[i])
+                    or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]], self.mp.barrier_start[i], self.mp.barrier_start[i])
+                        or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]], self.mp.barrier_start[i], self.mp.barrier_start[i])):
+                return 1
+        if main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], [404, 207], [404, 241]):
+                return 1
+        return 0
