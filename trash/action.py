@@ -62,9 +62,4 @@ def on_area():
             # 遇到buff
             pass
 
-for i in range(8):
-    if (is_inter([C.peak[0], C.peak[1]], [C.peak[6], C.peak[7]], M.barrier_start[i], M.barrier_end[i])
-            and is_inter([C.peak[2], C.peak[3]], [C.peak[4], C.peak[5]], M.barrier_start[i], M.barrier_end[i])):
-        # 遇到障碍物，改变速度
-        pass
 
