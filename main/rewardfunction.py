@@ -17,11 +17,11 @@ def reward(s, s_):
 
     # bullet
     bullet_a1 = 10
-    f_bullet = (s_.mybullet - s.mybullet) * bullet_a1
+    f_bullet = -1 * (s_.mybullet - s.mybullet) * bullet_a1
 
     # check
     check_a1 = 5
-    if s_.isDetected == 1 and s.isDetected == 0:
+    if s_.canattack == 1 and s.canattack == 0:
         f_check = check_a1
     else:
         f_check = 0

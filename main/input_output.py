@@ -23,6 +23,7 @@ class observation(object):
         self.detected = detected
         self.canattack = canattack
         self.remaintime = remaintime
+        self.chufa = [0, 0, 0, 0, 0, 0]
 
 
     def get_observation(self):
@@ -31,7 +32,8 @@ class observation(object):
                 self.mytheta, self.mylinearvel, self.myanglevel,
                 self.enemyhp, self.enemybullet, self.enemyheat,
                 self.enemyx, self.enemyy, self.isdetected,
-                self.canattack, self.remaintime]
+                self.canattack, self.remaintime,
+                self.chufa[2], self.chufa[3], self.chufa[4], self.chufa[5]]
 
 
 class action(object):
