@@ -28,7 +28,7 @@ class observation(object):
     def get_observation(self):
         return [self.myhp, self.mybullet, self.myheat, self.myfire,
                 self.mypitch, self.mydebeff, self.myx, self.myy,
-                self.mytheta, self.mylinearval, self.myangleval,
+                self.mytheta, self.mylinearvel, self.myanglevel,
                 self.enemyhp, self.enemybullet, self.enemyheat,
                 self.enemyx, self.enemyy, self.isdetected,
                 self.canattack, self.remaintime]
