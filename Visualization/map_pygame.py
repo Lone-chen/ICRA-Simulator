@@ -62,7 +62,7 @@ class Ship():
             for j in range(i + 1, 4):
                 list = main.get_line.get_lines(int(self.x[i]), int(self.y[i]), int(self.x[j]), int(self.y[j]))
                 for p, q in list:
-                    if p>0 and p<810 and q>0 and q<510 and A.map[q][p] == 1:
+                    if p>0 and p<A.length and q>0 and q<A.width and A.map[q][p] == 1:
                         self.barrairs = False
         return self.barrairs
 
@@ -150,7 +150,7 @@ def check_event(ship):
 
 def run_game():
     pygame.init()
-    SCREEN_SIZE = (810, 510)
+    SCREEN_SIZE = (1600, A.width)
     screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
     pygame.display.set_caption("map")
     R1 = pygame.image.load("../image/1.png").convert()
@@ -174,21 +174,25 @@ def run_game():
     text13_surface = font.render("  gim_angle: ", True, (255, 255, 255))
 
     while True:
-        screen.fill((110, 123, 139))
+        screen.fill((0, 0, 0))
 
         time_passed = clock.tick()
 
-        for i in range(0, 510):
-            for j in range(0, 810):
-                if A.map[i][j] == 1:
-                    screen.fill((133, 106, 106), Rect(j, i, 1, 1))
-                if A.map[i][j] == 8:
-                    screen.fill((230, 213, 87), Rect(j, i, 1, 1))
+        for i in range(0, A.width):
+            for j in range(0,A.length):
+                screen.fill((79, 79, 79), Rect(j, i, 1, 1))
 
-        screen.blit(R1, (0, 0))
-        screen.blit(R1, (0, 410))
-        screen.blit(R2, (710, 410))
-        screen.blit(R2, (710, 0))
+        for i in range(0, A.width):
+            for j in range(0,A.length):
+                if A.map[i][j] == 1:
+                    screen.fill((156, 156, 156), Rect(j, i, 1, 1))
+                if A.map[i][j] == 8:
+                    screen.fill((255, 179, 0), Rect(j, i, 1, 1))
+
+        screen.blit(R1, A.initial_start[0])
+        screen.blit(R1, A.initial_start[1])
+        screen.blit(R2, A.initial_start[2])
+        screen.blit(R2, A.initial_start[3])
 
         screen.blit(B1, A.barrier_start[0])
         screen.blit(B2, A.barrier_start[1])
@@ -234,6 +238,8 @@ def run_game():
         screen.blit(text14_surface, (207, 128))
 
         pygame.display.update()
+
+
 print(A.areas)
 run_game()
 
