@@ -7,7 +7,7 @@ import main.visual_judge
 
 
 class CAR(object):
-    def __init__(self, team, bullet, angle, pitch, mp, hpbuff = 0, bulletbuff = 0, debuff = 0, hp = 2000, heat = 0, local = (300, 300)):
+    def __init__(self, team, bullet, angle, pitch, mp, hpbuff = 0, bulletbuff = 0, hp = 2000, heat = 0, local = (300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = team            # 0为红方，1为蓝方
         self.mp = mp                # 地图属性
@@ -36,7 +36,8 @@ class CAR(object):
 
         self.hpbuff = hpbuff            # 加血buff
         self.bulletbuff = bulletbuff    # 补弹buff
-        self.debuff = debuff            # 禁区buff时间
+        self.shoot_forbiden = 0         # 禁止射击时间
+        self.move_forbiden = 0          # 禁止移动时间
 
         self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
         self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
@@ -170,7 +171,8 @@ class CAR(object):
         self.pitch = self.reset_data[3]
         self.hpbuff = 0
         self.bulletbuff = 0
-        self.debuff = 0
+        self.shoot_forbiden = 0
+        self.move_forbiden = 0
         self.peak = self.get_peak()
         self.inSight = [0, 0]
         self.armors = [[], [], [], [], [], [], [], []]

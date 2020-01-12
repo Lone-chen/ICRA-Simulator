@@ -17,7 +17,7 @@ class ver_env(object):
         self.done = 0
         self.inf = -10000
         self.build_match()
-        self.chufa = [0, 0, 0, 0, 0, 0]
+        self.chufa = [0, 0, 0, 0, 0, 0, 0, 0]
         self.old_sA = observation()
         self.old_sB = observation()
 
@@ -119,6 +119,7 @@ class ver_env(object):
             return carx.x + 400 * random.uniform(-0.03, 0.03)
         else:
             return -1
+
     def get_car_y(self, carx):
         if carx.isdected == 1 and carx.canattack == 1:
             return carx.y
@@ -126,5 +127,31 @@ class ver_env(object):
             return carx.y + 250 * random.uniform(-0.03, 0.03)
         else:
             return -1
+
     def check_on_buff(self, carx):
-        pass
+        i = carx.on_buff()
+        if i == 0:
+            return -1
+        if self.chufa[i] == 0:
+            if i == 2:
+                self.carA.hp = min(2000, self.carA.hp + 200)
+                self.carA.hpbuff = 1
+                self.chufa[i] = 1
+            if i == 3:
+                self.carB.hp = min(2000, self.carB.hp + 200)
+                self.carB.hpbuff = 1
+                self.chufa[i] = 1
+            if i == 4:
+                self.carA.bullet += 100
+                self.carA.bulletbuff = 1
+                self.chufa[i] = 1
+            if i == 5:
+                self.carB.bullet += 100
+                self.carB.bulletbuff = 1
+                self.chufa[i] = 1
+            if i == 6:
+                carx.move_forbiden = 10
+                self.chufa[i] = 1
+            if i == 7:
+                carx.shoot_forbiden = 10
+                self.chufa[i] = 1
