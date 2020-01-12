@@ -1,11 +1,14 @@
 import sys
 import pygame
 from pygame.locals import *
-import main.map
+from main.map import MAP
 import main.get_line
 import math
+from play import ver_env
+import time
 
-A = main.map.MAP()
+A = MAP()
+Env = ver_env()
 
 class Ship():
     def __init__(self, screen):
@@ -162,19 +165,55 @@ def run_game():
     B3 = pygame.image.load("../image/7.png").convert()
     # clock对象
     clock = pygame.time.Clock()
-    car = Ship(screen)
+    car1 = Ship(screen)
     # 字体显示
+    text_surface = []
+    for i in range(0, 22):
+        text_surface.append(0)
+    env_surface = []
+    for i in range(0, 10):
+        env_surface.append(0)
     font = pygame.font.SysFont("simsunnsimsun", 16)
-    text1_surface = font.render("V_x : ", True, (255, 255, 255))
-    text3_surface = font.render("V_y : ", True, (255, 255, 255))
-    text5_surface = font.render("X  : ", True, (255, 255, 255))
-    text7_surface = font.render("Y  : ", True, (255, 255, 255))
-    text9_surface = font.render("judge: ", True, (255, 255, 255))
-    text11_surface = font.render("angle: ", True, (255, 255, 255))
-    text13_surface = font.render("  gim_angle: ", True, (255, 255, 255))
+
+    textA_surface = font.render("CarA : ", True, (255, 255, 255))
+    textB_surface = font.render("CarB : ", True, (255, 255, 255))
+    text_surface[0] = font.render("Hp : ", True, (255, 255, 255))
+    text_surface[1] = font.render("Bullet : ", True, (255, 255, 255))
+    text_surface[2] = font.render("Heat : ", True, (255, 255, 255))
+    text_surface[3] = font.render("X : ", True, (255, 255, 255))
+    text_surface[4] = font.render("Y : ", True, (255, 255, 255))
+    text_surface[5] = font.render("Hest_Freeze : ", True, (255, 255, 255))
+    text_surface[6] = font.render("Angle : ", True, (255, 255, 255))
+    text_surface[7] = font.render("", True, (255, 255, 255))
+    text_surface[8] = font.render("V_Shoot : ", True, (255, 255, 255))
+    text_surface[9] = font.render("W_Gim : ", True, (255, 255, 255))
+    text_surface[10] = font.render("V_x : ", True, (255, 255, 255))
+    text_surface[11] = font.render("V_y : ", True, (255, 255, 255))
+    text_surface[12] = font.render("Angle_V : ", True, (255, 255, 255))
+    text_surface[13] = font.render("", True, (255, 255, 255))
+    text_surface[14] = font.render("Gim_Angle : ", True, (255, 255, 255))
+    text_surface[15] = font.render("Move_Forb : ", True, (255, 255, 255))
+    text_surface[16] = font.render("Shoot_Forb : ", True, (255, 255, 255))
+    text_surface[17] = font.render("IsDetected : ", True, (255, 255, 255))
+    text_surface[18] = font.render("InSight : ", True, (255, 255, 255))
+    text_surface[19] = font.render("HpBuff : ", True, (255, 255, 255))
+    text_surface[20] = font.render("BulletBuff : ", True, (255, 255, 255))
+    text_surface[21] = font.render("Meet_Barrier : ", True, (255, 255, 255))
+
+    env_surface[0] = font.render("Enviroment : ", True, (255, 255, 255))
+    env_surface[1] = font.render("Time : ", True, (255, 255, 255))
+    env_surface[2] = font.render("A_HpBuff : ", True, (255, 255, 255))
+    env_surface[3] = font.render("B_HpBuff : ", True, (255, 255, 255))
+    env_surface[4] = font.render("A_BulletBuff : ", True, (255, 255, 255))
+    env_surface[5] = font.render("B_BulletBuff : ", True, (255, 255, 255))
+    env_surface[6] = font.render("MoveForb : ", True, (255, 255, 255))
+    env_surface[7] = font.render("ShootForb : ", True, (255, 255, 255))
+    env_surface[8] = font.render("A_Fired : ", True, (255, 255, 255))
+    env_surface[9] = font.render("B_Fired : ", True, (255, 255, 255))
 
     while True:
         screen.fill((0, 0, 0))
+        x = [830, 1100, 1370]
 
         time_passed = clock.tick()
 
@@ -210,32 +249,95 @@ def run_game():
         screen.blit(F, A.area_start[4])
         screen.blit(F, A.area_start[5])
 
-        car.blitme()
+        car1.blitme()
 
-        check_event(car)
-        car.update()
+        check_event(car1)
+        car1.update()
 
-        screen.blit(text1_surface, (150, 20))
-        screen.blit(text3_surface, (150, 38))
-        screen.blit(text5_surface, (150, 56))
-        screen.blit(text7_surface, (150, 74))
-        screen.blit(text9_surface, (150, 92))
-        screen.blit(text11_surface, (150, 110))
-        screen.blit(text13_surface, (110, 128))
-        text2_surface = font.render(str(car.acel_right), True, (255, 255, 255))
-        text4_surface = font.render(str(car.acel_up), True, (255, 255, 255))
-        text6_surface = font.render(str(car.rect.centerx), True, (255, 255, 255))
-        text8_surface = font.render(str(car.rect.centery), True, (255, 255, 255))
-        text10_surface = font.render(str(car.barrairs), True, (255, 255, 255))
-        text12_surface = font.render(str(round(car.angle, 2)), True, (255, 255, 255))
-        text14_surface = font.render(str(round(car.gimangle, 2)), True, (255, 255, 255))
-        screen.blit(text2_surface, (198, 20))
-        screen.blit(text4_surface, (198, 38))
-        screen.blit(text6_surface, (198, 56))
-        screen.blit(text8_surface, (198, 74))
-        screen.blit(text10_surface, (207, 92))
-        screen.blit(text12_surface, (207, 110))
-        screen.blit(text14_surface, (207, 128))
+        screen.blit(textA_surface, (x[0], 20))
+        for i in range(0, 22):
+            screen.blit(text_surface[i], (x[0] + 45, 20 + i*18))
+        screen.blit(textB_surface, (x[1], 20))
+        for i in range(0, 22):
+            screen.blit(text_surface[i], (x[1] + 45, 20 + i*18))
+        screen.blit(env_surface[0], (x[2], 20))
+        for i in range(1, 10):
+            screen.blit(env_surface[i], (x[2] + 45, 20 + i * 18))
+
+        text_surfaceA = []
+        for i in range(0, 22):
+            text_surfaceA.append(0)
+
+        text_surfaceB = []
+        for i in range(0, 22):
+            text_surfaceB.append(0)
+
+        text_enviroment = []
+        for i in range(0, 10):
+            text_enviroment.append(0)
+
+        text_surfaceA[0] = font.render(str(Env.carA.hp), True, (255, 255, 255))
+        text_surfaceA[1] = font.render(str(Env.carA.bullet), True, (255, 255, 255))
+        text_surfaceA[2] = font.render(str(Env.carA.heat), True, (255, 255, 255))
+        text_surfaceA[3] = font.render(str(Env.carA.x), True, (255, 255, 255))
+        text_surfaceA[4] = font.render(str(Env.carA.y), True, (255, 255, 255))
+        text_surfaceA[5] = font.render(str(Env.carA.HEAT_FREEZE), True, (255, 255, 255))
+        text_surfaceA[6] = font.render(str(round(Env.carA.angle, 2)), True, (255, 255, 255))
+        text_surfaceA[7] = font.render("", True, (255, 255, 255))
+        text_surfaceA[8] = font.render(str(Env.carA.v), True, (255, 255, 255))
+        text_surfaceA[9] = font.render(str(round(Env.carA.w_vel, 2)), True, (255, 255, 255))
+        text_surfaceA[10] = font.render(str(Env.carA.line_speed[0]), True, (255, 255, 255))
+        text_surfaceA[11] = font.render(str(Env.carA.line_speed[1]), True, (255, 255, 255))
+        text_surfaceA[12] = font.render(str(Env.carA.angular_speed), True, (255, 255, 255))
+        text_surfaceA[13] = font.render("", True, (255, 255, 255))
+        text_surfaceA[14] = font.render(str(Env.carA.pitch), True, (255, 255, 255))
+        text_surfaceA[15] = font.render(str(Env.carA.move_forbiden), True, (255, 255, 255))
+        text_surfaceA[16] = font.render(str(Env.carA.shoot_forbiden), True, (255, 255, 255))
+        text_surfaceA[17] = font.render(str(Env.carA.isdetected), True, (255, 255, 255))
+        text_surfaceA[18] = font.render(str(Env.carA.on_buff()), True, (255, 255, 255))
+        text_surfaceA[19] = font.render(str(Env.carA.hpbuff), True, (255, 255, 255))
+        text_surfaceA[20] = font.render(str(Env.carA.bulletbuff), True, (255, 255, 255))
+        text_surfaceA[21] = font.render(str(Env.carA.on_barriers()), True, (255, 255, 255))
+
+        text_surfaceB[0] = font.render(str(Env.carB.hp), True, (255, 255, 255))
+        text_surfaceB[1] = font.render(str(Env.carB.bullet), True, (255, 255, 255))
+        text_surfaceB[2] = font.render(str(Env.carB.heat), True, (255, 255, 255))
+        text_surfaceB[3] = font.render(str(Env.carB.x), True, (255, 255, 255))
+        text_surfaceB[4] = font.render(str(Env.carB.y), True, (255, 255, 255))
+        text_surfaceB[5] = font.render(str(Env.carB.HEAT_FREEZE), True, (255, 255, 255))
+        text_surfaceB[6] = font.render(str(round(Env.carB.angle, 2)), True, (255, 255, 255))
+        text_surfaceB[7] = font.render("", True, (255, 255, 255))
+        text_surfaceB[8] = font.render(str(Env.carB.v), True, (255, 255, 255))
+        text_surfaceB[9] = font.render(str(round(Env.carB.w_vel, 2)), True, (255, 255, 255))
+        text_surfaceB[10] = font.render(str(Env.carB.line_speed[0]), True, (255, 255, 255))
+        text_surfaceB[11] = font.render(str(Env.carB.line_speed[1]), True, (255, 255, 255))
+        text_surfaceB[12] = font.render(str(Env.carB.angular_speed), True, (255, 255, 255))
+        text_surfaceB[13] = font.render("", True, (255, 255, 255))
+        text_surfaceB[14] = font.render(str(Env.carB.pitch), True, (255, 255, 255))
+        text_surfaceB[15] = font.render(str(Env.carB.move_forbiden), True, (255, 255, 255))
+        text_surfaceB[16] = font.render(str(Env.carB.shoot_forbiden), True, (255, 255, 255))
+        text_surfaceB[17] = font.render(str(Env.carB.isdetected), True, (255, 255, 255))
+        text_surfaceB[18] = font.render(str(Env.carB.on_buff()), True, (255, 255, 255))
+        text_surfaceB[19] = font.render(str(Env.carB.hpbuff), True, (255, 255, 255))
+        text_surfaceB[20] = font.render(str(Env.carB.bulletbuff), True, (255, 255, 255))
+        text_surfaceB[21] = font.render(str(Env.carB.on_barriers()), True, (255, 255, 255))
+
+        text_enviroment[1] = font.render(str(Env.time / 10), True, (255, 255, 255))
+        text_enviroment[2] = font.render(str(Env.chufa[2]), True, (255, 255, 255))
+        text_enviroment[3] = font.render(str(Env.chufa[3]), True, (255, 255, 255))
+        text_enviroment[4] = font.render(str(Env.chufa[4]), True, (255, 255, 255))
+        text_enviroment[5] = font.render(str(Env.chufa[5]), True, (255, 255, 255))
+        text_enviroment[6] = font.render(str(Env.chufa[6]), True, (255, 255, 255))
+        text_enviroment[7] = font.render(str(Env.chufa[7]), True, (255, 255, 255))
+        text_enviroment[8] = font.render(str(Env.Afire), True, (255, 255, 255))
+        text_enviroment[9] = font.render(str(Env.Bfire), True, (255, 255, 255))
+
+        for i in range(0, 22):
+            screen.blit(text_surfaceA[i], (x[0] + 145, 20 + i * 18))
+        for i in range(0, 22):
+            screen.blit(text_surfaceB[i], (x[1] + 145, 20 + i * 18))
+        for i in range(1, 10):
+            screen.blit(text_enviroment[i], (x[2] + 145, 20 + i * 18))
 
         pygame.display.update()
 

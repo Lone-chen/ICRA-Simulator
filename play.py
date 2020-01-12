@@ -1,15 +1,17 @@
 from main.car import CAR
+import main.intersect
 from main.input_output import observation,action
 from main.map import MAP
 import main.rewardfunction as rf
 import random
 import math
 
+A = MAP()
 
 class ver_env(object):
     def __init__(self):
-        self.carA = CAR(0, 50, 0, 0, local=(398, 50))
-        self.carB = CAR(1, 50, math.pi/2, 0, local=(799, 50))
+        self.carA = CAR(0, 50, 0, 0, A, local=(398, 50))
+        self.carB = CAR(1, 50, math.pi/2, 0, A, local=(799, 50))
         self.map = MAP()
         self.Afire = 0
         self.Bfire = 0
@@ -51,12 +53,12 @@ class ver_env(object):
 
     def step(self, actionA, actionB):
         # 未定义碰撞
-        actionA = action(actionA)
+        actionA = (actionA)
         actionB = action(actionB)
         sA = observation()
         sB = observation()
-        self.carA.change_location(actionA.linear_vel, actionA.angle_vel, actionA.w)
-        self.carB.change_location(actionB.linear_vel, actionB.angle_vel, actionA.w)
+        self.carA.change_location(actionA.linear_vel, actionA.angle_vel)
+        self.carB.change_location(actionB.linear_vel, actionB.angle_vel)
         self.carA.get_isdetected()
         self.carB.get_isdetected()
 
@@ -113,17 +115,17 @@ class ver_env(object):
         return sA.get_observation(), rA, sB.get_observation(), rB, self.done
 
     def get_car_x(self, carx):
-        if carx.isdected == 1 and carx.canattack == 1:
+        if carx.isdetected == 1 and carx.canattack == 1:
             return carx.x
-        elif carx.isdected == 1 and carx.canattack == 0:
+        elif carx.isdetected == 1 and carx.canattack == 0:
             return carx.x + 400 * random.uniform(-0.03, 0.03)
         else:
             return -1
 
     def get_car_y(self, carx):
-        if carx.isdected == 1 and carx.canattack == 1:
+        if carx.isdetected == 1 and carx.canattack == 1:
             return carx.y
-        elif carx.isdected == 1 and carx.canattack == 0:
+        elif carx.isdetected == 1 and carx.canattack == 0:
             return carx.y + 250 * random.uniform(-0.03, 0.03)
         else:
             return -1

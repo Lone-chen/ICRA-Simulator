@@ -1,12 +1,9 @@
 import math
 import random
-from main.car import CAR
 from main.map import MAP
 import main.get_line
 
 C = MAP()
-A = CAR(50,0,0,0,0)
-B = CAR(50,0,0,0,0)
 
 
 def angle_calculate(x, y):

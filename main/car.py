@@ -7,7 +7,7 @@ import main.visual_judge
 
 
 class CAR(object):
-    def __init__(self, team, bullet, angle, pitch, mp, hpbuff = 0, bulletbuff = 0, hp = 2000, heat = 0, local = (300, 300)):
+    def __init__(self, team, bullet, angle, pitch, mp, hpbuff = 0, bulletbuff = 0, debuff = 0, hp = 2000, heat = 0, local = (300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = team            # 0为红方，1为蓝方
         self.mp = mp                # 地图属性
@@ -25,7 +25,7 @@ class CAR(object):
         self.line_speed_xmax = 0    # x轴最大线速度
         self.line_speed_ymax = 0    # y轴最大速度
         self.angular_speed_max = 0  # 最大角速度
-        self.line_speed = 0         # 线速度
+        self.line_speed = [0, 0]    # 线速度
         self.angular_speed = 0      # 角速度
 
 
@@ -36,9 +36,11 @@ class CAR(object):
 
         self.hpbuff = hpbuff            # 加血buff
         self.bulletbuff = bulletbuff    # 补弹buff
+        self.debuff = debuff            # 禁区
         self.shoot_forbiden = 0         # 禁止射击时间
         self.move_forbiden = 0          # 禁止移动时间
 
+        self.canattack = 0                                  # 小车能否射击
         self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
         self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
         self.armors = [[], [], [], [], [], [], [], []]      # 装甲板相对小车中心距离,前后左右
@@ -143,7 +145,7 @@ class CAR(object):
         srx = (x-pointx)*cos(angle) + (y-pointy)*sin(angle)+pointx
         sry = (y-pointy)*cos(angle) - (x-pointx)*sin(angle)+pointy
         nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
-        nry = (x-pointx)*sin(angle) + (y-pointy)*cos(angle)+pointy
+        nry = (x-pointy)*sin(angle) + (y-pointy)*cos(angle)+pointy
         :param MAP: map地图
         :return:顶点坐标数组peak
         """
@@ -163,36 +165,32 @@ class CAR(object):
         :return:
         """
         self.hp = 2000
-        self.x = self.reset_data[0]
-        self.y = self.reset_data[1]
         self.bullet = 50
         self.heat = 0
+        self.x = self.reset_data[0]
+        self.y = self.reset_data[1]
+        self.HEAT_FREEZE = -120
         self.angle = self.reset_data[2]
+
+        self.v = 20
+        self.w_vel = math.pi
+        self.line_speed = [0, 0]
+        self.angular_speed = 0
+        self.angular_speed = 0
+
         self.pitch = self.reset_data[3]
+        self.peak = self.get_peak()
+
         self.hpbuff = 0
         self.bulletbuff = 0
+        self.debuff = 0
         self.shoot_forbiden = 0
         self.move_forbiden = 0
-        self.peak = self.get_peak()
+
+        self.canattack = 0
+        self.isdetected = self.get_isdetected()
         self.inSight = [0, 0]
         self.armors = [[], [], [], [], [], [], [], []]
-        self.line_speed = 0
-        self.angular_speed = 0
-        self.line_acel = 0
-        self.angular_speed = 0
-        self.mp = MAP()
-
-    def change_location(self, l_speed, angle_speed):
-        """
-
-        :param l_acel: 小车的线速度
-        :param angle_acel: 小车的角速度
-        :return:
-        """
-        self.x = 0
-        self.y = 0
-        self.line_speed += self.line_acel * self.T
-        self.angular_speed +=  self.angular_speed * self.T
 
     def get_isdetected(self):
         if random.random() >= 0.7:
@@ -267,7 +265,7 @@ class CAR(object):
                 or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.area_start[i], self.mp.area_end[i])
                     or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
                         or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]], self.mp.area_start[i], self.mp.area_end[i])):
-                return self.mp.area[i]
+                return self.mp.areas[i]
         return 0
 
     def on_barriers(self):
