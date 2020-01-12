@@ -153,7 +153,7 @@ def check_event(ship):
 
 def run_game():
     pygame.init()
-    SCREEN_SIZE = (1600, A.width)
+    SCREEN_SIZE = (1450, A.width)
     screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
     pygame.display.set_caption("map")
     R1 = pygame.image.load("../image/1.png").convert()
@@ -213,7 +213,7 @@ def run_game():
 
     while True:
         screen.fill((0, 0, 0))
-        x = [830, 1100, 1370]
+        x = [820, 1040, 1260]
 
         time_passed = clock.tick()
 
