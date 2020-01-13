@@ -65,7 +65,7 @@ class Ship():
             for j in range(i + 1, 4):
                 list = main.get_line.get_lines(int(self.x[i]), int(self.y[i]), int(self.x[j]), int(self.y[j]))
                 for p, q in list:
-                    if p>0 and p<A.length and q>0 and q<A.width and A.map[q][p] == 1:
+                    if (p>0 and p<A.length and q>0 and q<A.width and A.map[q][p] == 1) or p >= A.length:
                         self.barrairs = False
         return self.barrairs
 
