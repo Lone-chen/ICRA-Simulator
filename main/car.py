@@ -307,3 +307,4 @@ class CAR(object):
         self.y = (self.line_speed[0] * (math.sin(self.T * self.angular_speed + self.angle) - math.sin(self.angle)) -
                     self.line_speed[1] * (math.cos(self.T * self.angular_speed + self.angle) - math.cos(self.angle))) / self.angular_speed
         self.angle += self.angular_speed * self.T
+

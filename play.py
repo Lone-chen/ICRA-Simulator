@@ -18,6 +18,7 @@ class ver_env(object):
         self.inf = -10000
         self.build_match()
         self.chufa = [0, 0, 0, 0, 0, 0]
+        self.
         self.old_sA = observation()
         self.old_sB = observation()
 
@@ -153,3 +154,21 @@ class ver_env(object):
             if i == 7:
                 carx.shoot_forbiden = 10
                 self.chufa[i] = 1
+
+
+    def refreash_touch(self):
+        self.map.areas_rand()
+        for i in range(0, 6):
+            if self.map.areas[i] == 2:
+                self.chufa[0] = 0
+                self.
+            elif self.map.areas[i] == 3:
+                self.chufa[1] = 1
+            elif self.map.areas[i] == 4:
+                self.chufa[2] = 1
+            elif self.map.areas[i] == 5:
+                self.chufa[3] = 1
+            elif self.map.areas[i] == 6:
+                self.chufa[4] = 1
+            elif self.map.areas[i] == 7:
+                self.chufa[5] = 1
