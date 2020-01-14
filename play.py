@@ -190,5 +190,31 @@ class ver_env(object):
             if i == 7:
                 carx.shoot_forbiden = 10
                 self.chufa[i-2] = 1
-    def refresh_buff(self):
-        pass
+
+    def refreash_buff(self):
+        self.map.areas_rand()
+        for i in range(0, 6):
+            if self.map.areas[i] == 2:
+                self.chufa[0] = 0
+                self.area_x[0] = (self.map.area_start[0][0] + self.map.area_end[0][0]) / 2
+                self.area_y[0] = (self.map.area_start[0][1] + self.map.area_end[0][1]) / 2
+            elif self.map.areas[i] == 3:
+                self.chufa[1] = 0
+                self.area_x[1] = (self.map.area_start[1][0] + self.map.area_end[1][0]) / 2
+                self.area_y[1] = (self.map.area_start[1][1] + self.map.area_end[1][1]) / 2
+            elif self.map.areas[i] == 4:
+                self.chufa[2] = 0
+                self.area_x[2] = (self.map.area_start[2][0] + self.map.area_end[2][0]) / 2
+                self.area_y[2] = (self.map.area_start[2][1] + self.map.area_end[2][1]) / 2
+            elif self.map.areas[i] == 5:
+                self.chufa[3] = 0
+                self.area_x[3] = (self.map.area_start[3][0] + self.map.area_end[3[0]]) / 2
+                self.area_y[3] = (self.map.area_start[3][1] + self.map.area_end[3][1]) / 2
+            elif self.map.areas[i] == 6:
+                self.chufa[4] = 0
+                self.area_x[4] = (self.map.area_start[4][0] + self.map.area_end[4][0]) / 2
+                self.area_y[4] = (self.map.area_start[4][1] + self.map.area_end[4][1]) / 2
+            elif self.map.areas[i] == 7:
+                self.chufa[5] = 0
+                self.area_x[5] = (self.map.area_start[5][0] + self.map.area_end[5][0]) / 2
+                self.area_y[5] = (self.map.area_start[5][1] + self.map.area_end[5][1]) / 2
