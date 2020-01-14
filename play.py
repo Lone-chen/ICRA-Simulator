@@ -127,4 +127,29 @@ class ver_env(object):
         else:
             return -1
     def check_on_buff(self, carx):
-        pass
+        i = carx.on_buff()
+        if i == 0:
+            return -1
+        if self.chufa[i] == 0:
+            if i == 2:
+                self.carA.hp = min(2000, self.carA.hp + 200)
+                self.carA.hpbuff = 1
+                self.chufa[i] = 1
+            if i == 3:
+                self.carB.hp = min(2000, self.carB.hp + 200)
+                self.carB.hpbuff = 1
+                self.chufa[i] = 1
+            if i == 4:
+                self.carA.bullet += 100
+                self.carA.bulletbuff = 1
+                self.chufa[i] = 1
+            if i == 5:
+                self.carB.bullet += 100
+                self.carB.bulletbuff = 1
+                self.chufa[i] = 1
+            if i == 6:
+                carx.move_forbiden = 10
+                self.chufa[i] = 1
+            if i == 7:
+                carx.shoot_forbiden = 10
+                self.chufa[i] = 1
