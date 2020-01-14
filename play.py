@@ -37,13 +37,13 @@ class ver_env(object):
                          self.carA.pitch, self.carA.debuff, self.carA.x, self.carA.y,
                          self.carA.line_speed, self.carA.angular_speed,
                          self.carB.hp, self.carB.bullet, self.carB.heat,
-                         self.get_car_x(self.carB), self.get_car_y(self.carB),
+                         self.get_car_x(self.carA, self.carB), self.get_car_y(self.carA, self.carB),
                          self.carB.isdetected, 0, self.time)
         sB = observation(self.carB.hp, self.carB.bullet,self.carB.heat, self.Bfire,
                          self.carB.pitch, self.carB.debuff, self.carB.x, self.carB.y,
                          self.carB.line_speed, self.carB.angular_speed,
                          self.carA.hp, self.carA.bullet,self.carA.heat,
-                         self.get_car_x(self.carA), self.get_car_y(self.carA),
+                         self.get_car_x(self.carB, self.carA), self.get_car_y(self.carB, self.carA),
                          self.carA.isdetected, 0, self.time)
         self.old_sA = sA
         self.old_sB = sB
@@ -65,9 +65,9 @@ class ver_env(object):
         sA.mytheta = self.carA.angle
         sA.mylinearvel = self.carA.line_speed
         sA.myanglevel = self.carA.angular_speed
-        sA.enemyx = self.get_car_x(self.carB)
-        sA.enemyy = self.get_car_y(self.carB)
-        sA.detected = self.carB.isdetected
+        sA.enemyx = self.get_car_x(self.carA, self.carB)
+        sA.enemyy = self.get_car_y(self.carA, self.carB)
+        sA.isdetected = self.carB.isdetected
         sA.canattack = self.carA.visual_field(self.carB)
         sA.myfire = self.Afire
 
@@ -76,9 +76,9 @@ class ver_env(object):
         sB.mytheta = self.carB.angle
         sB.mylinearvel = self.carB.line_speed
         sB.myanglevel = self.carB.angular_speed
-        sB.enemyx = self.get_car_x(self.carA)
-        sB.enemyy = self.get_car_y(self.carA)
-        sB.detected = self.carA.isdetected
+        sB.enemyx = self.get_car_x(self.carB, self.carA)
+        sB.enemyy = self.get_car_y(self.carB, self.carA)
+        sB.isdetected = self.carA.isdetected
         sB.canattack = self.carB.visual_field(self.carA)
         sB.myfire = self.Bfire
 
@@ -97,8 +97,8 @@ class ver_env(object):
         self.check_on_buff(self.carA)
         self.check_on_buff(self.carB)
 
-        rA = rf.reward(self.old_sA, sA)
-        rB = rf.reward(self.old_sA, sA)
+        rA = rf.reward(self.old_sA, sA, 0)
+        rB = rf.reward(self.old_sB, sB, 1)
         if self.carA.on_barriers() == 1:
             self.done = 1
             rA = self.inf
@@ -112,18 +112,18 @@ class ver_env(object):
         self.time -= 1
         return sA.get_observation(), rA, sB.get_observation(), rB, self.done
 
-    def get_car_x(self, carx):
-        if carx.isdected == 1 and carx.canattack == 1:
-            return carx.x
-        elif carx.isdected == 1 and carx.canattack == 0:
-            return carx.x + 400 * random.uniform(-0.03, 0.03)
+    def get_car_x(self, carx, cary):
+        if cary.isdetected == 1 and carx.visual_field(cary) > 0:
+            return cary.x
+        elif cary.isdetected == 1 and carx.visual_field(cary) == 0:
+            return cary.x + 400 * random.uniform(-0.03, 0.03)
         else:
             return -1
-    def get_car_y(self, carx):
-        if carx.isdected == 1 and carx.canattack == 1:
-            return carx.y
-        elif carx.isdected == 1 and carx.canattack == 0:
-            return carx.y + 250 * random.uniform(-0.03, 0.03)
+    def get_car_y(self, carx, cary):
+        if cary.isdetected == 1 and carx.visual_field(cary) == 1:
+            return cary.y
+        elif cary.isdetected == 1 and carx.visual_field(cary) == 0:
+            return cary.y + 250 * random.uniform(-0.03, 0.03)
         else:
             return -1
     def check_on_buff(self, carx):

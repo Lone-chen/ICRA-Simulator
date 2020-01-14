@@ -3,7 +3,7 @@ class observation(object):
                  mypitch=0, mydebeff=0, myx=0, myy=0, mytheta=0,
                  mylinearvel=0, myanglevel=0,
                  enemyhp=0, enemybullet=0, enemyheat=0, enemyx=0, enemyy=0,
-                 detected=0, canattack=0, remaintime=0):
+                 isdetected=0, canattack=0, remaintime=0):
         self.myhp = myhp
         self.mybullet = mybullet
         self.myheat = myheat
@@ -20,11 +20,12 @@ class observation(object):
         self.enemyheat = enemyheat
         self.enemyx = enemyx
         self.enemyy = enemyy
-        self.detected = detected
+        self.isdetected = isdetected
         self.canattack = canattack
         self.remaintime = remaintime
-        self.chufa = [0, 0, 0, 0, 0, 0]
-
+        self.chufa = [0, 0, 0, 0, 0, 0] # x-2
+        self.area_x = [0, 0, 0, 0, 0, 0]
+        self.area_y = [0, 0, 0, 0, 0, 0]
 
     def get_observation(self):
         return [self.myhp, self.mybullet, self.myheat, self.myfire,
@@ -33,7 +34,9 @@ class observation(object):
                 self.enemyhp, self.enemybullet, self.enemyheat,
                 self.enemyx, self.enemyy, self.isdetected,
                 self.canattack, self.remaintime,
-                self.chufa[2], self.chufa[3], self.chufa[4], self.chufa[5]]
+                self.chufa[0], self.chufa[1], self.chufa[2], self.chufa[3], self.chufa[4], self.chufa[5],
+                self.area_x[0], self.area_x[1], self.area_x[2], self.area_x[3], self.area_x[4], self.area_x[5],
+                self.area_y[0], self.area_y[1], self.area_y[2], self.area_y[3], self.area_y[4], self.area_y[5]]
 
 
 class action(object):
