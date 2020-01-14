@@ -22,10 +22,12 @@ class CAR(object):
 
         self.v = 20                 # 子弹发射速度
         self.w_vel = math.pi        # 炮台旋转速度
-        self.line_acel = 0          # 线加速度
-        self.angular_acel = 0       # 角加速度
-        self.line_speed = 0         # 线速度
+        self.line_speed_xmax = 0    # x轴最大线速度
+        self.line_speed_ymax = 0    # y轴最大速度
+        self.angular_speed_max = 0  # 最大角速度
+        self.line_speed = [0, 0]    # 线速度
         self.angular_speed = 0      # 角速度
+
 
         self.carLength = 600            # 小车纵向长度
         self.carWidth = 450             # 小车横向长度
@@ -34,8 +36,11 @@ class CAR(object):
 
         self.hpbuff = hpbuff            # 加血buff
         self.bulletbuff = bulletbuff    # 补弹buff
-        self.debuff = debuff            # 禁区buff时间
+        self.debuff = debuff            # 禁区
+        self.shoot_forbiden = 0         # 禁止射击时间
+        self.move_forbiden = 0          # 禁止移动时间
 
+        self.canattack = 0                                  # 小车能否射击
         self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
         self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
         self.armors = [[], [], [], [], [], [], [], []]      # 装甲板相对小车中心距离,前后左右
@@ -140,7 +145,7 @@ class CAR(object):
         srx = (x-pointx)*cos(angle) + (y-pointy)*sin(angle)+pointx
         sry = (y-pointy)*cos(angle) - (x-pointx)*sin(angle)+pointy
         nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
-        nry = (x-pointx)*sin(angle) + (y-pointy)*cos(angle)+pointy
+        nry = (x-pointy)*sin(angle) + (y-pointy)*cos(angle)+pointy
         :param MAP: map地图
         :return:顶点坐标数组peak
         """
@@ -160,35 +165,32 @@ class CAR(object):
         :return:
         """
         self.hp = 2000
-        self.x = self.reset_data[0]
-        self.y = self.reset_data[1]
         self.bullet = 50
         self.heat = 0
+        self.x = self.reset_data[0]
+        self.y = self.reset_data[1]
+        self.HEAT_FREEZE = -120
         self.angle = self.reset_data[2]
+
+        self.v = 20
+        self.w_vel = math.pi
+        self.line_speed = [0, 0]
+        self.angular_speed = 0
+        self.angular_speed = 0
+
         self.pitch = self.reset_data[3]
+        self.peak = self.get_peak()
+
         self.hpbuff = 0
         self.bulletbuff = 0
         self.debuff = 0
-        self.peak = self.get_peak()
+        self.shoot_forbiden = 0
+        self.move_forbiden = 0
+
+        self.canattack = 0
+        self.isdetected = self.get_isdetected()
         self.inSight = [0, 0]
         self.armors = [[], [], [], [], [], [], [], []]
-        self.line_speed = 0
-        self.angular_speed = 0
-        self.line_acel = 0
-        self.angular_speed = 0
-        self.mp = MAP()
-
-    def change_location(self, l_speed, angle_speed):
-        """
-
-        :param l_acel: 小车的线速度
-        :param angle_acel: 小车的角速度
-        :return:
-        """
-        self.x = 0
-        self.y = 0
-        self.line_speed += self.line_acel * self.T
-        self.angular_speed +=  self.angular_speed * self.T
 
     def get_isdetected(self):
         if random.random() >= 0.7:
@@ -263,7 +265,7 @@ class CAR(object):
                 or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.area_start[i], self.mp.area_end[i])
                     or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
                         or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]], self.mp.area_start[i], self.mp.area_end[i])):
-                return self.mp.area[i]
+                return self.mp.areas[i]
         return 0
 
     def on_barriers(self):
@@ -280,3 +282,28 @@ class CAR(object):
         if main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], [404, 207], [404, 241]):
                 return 1
         return 0
+
+    def change_location(self, l_v, angle_v):
+        """
+        :param l_v: 小车的线速度
+        :param angle_v: 小车的角速度
+        :return:
+        """
+        self.line_speed[0] = l_v[0]
+        self.line_speed[1] = l_v[1]
+        self.angular_speed = angle_v
+        if self.line_speed[0] >= self.line_speed_xmax:
+            self.line_speed[0] = self.line_speed_xmax
+        if self.line_speed[1] >= self.line_speed_ymax:
+            self.line_speed[1] = self.line_speed_ymax
+        if self.angular_speed >= self.angular_speed_max:
+            self.angular_speed = self.angular_speed_max
+        v_x = (self.line_speed[0]) * math.cos(self.angle + self.angular_speed * self.T) - \
+              (self.line_speed[1]) * math.sin(self.angle + self.angular_speed * self.T)
+        v_y = (self.line_speed[0]) * math.sin(self.angle + self.angular_speed * self.T) + \
+              (self.line_speed[1]) * math.cos(self.angle + self.angular_speed * self.T)
+        self.x = (self.line_speed[0] * (math.sin(self.T * self.angular_speed + self.angle) - math.sin(self.angle)) +
+                    self.line_speed[1] * (math.cos(self.T * self.angular_speed + self.angle) - math.cos(self.angle))) / self.angular_speed
+        self.y = (self.line_speed[0] * (math.sin(self.T * self.angular_speed + self.angle) - math.sin(self.angle)) -
+                    self.line_speed[1] * (math.cos(self.T * self.angular_speed + self.angle) - math.cos(self.angle))) / self.angular_speed
+        self.angle += self.angular_speed * self.T

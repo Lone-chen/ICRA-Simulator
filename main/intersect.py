@@ -1,7 +1,5 @@
-from main.car import CAR
 from main.map import MAP
 
-C = CAR(0, 0, 0, 0, [25, 50, 70, 50, 70, 110, 25, 110])
 M = MAP()
 
 
