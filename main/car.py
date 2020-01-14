@@ -1,6 +1,5 @@
 import math
 import random
-from main.map import MAP
 import main.get_line
 import main.intersect
 import main.visual_judge
@@ -43,6 +42,9 @@ class CAR(object):
         self.canattack = 0                                  # 小车能否射击
         self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
         self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
+        self.armor_length = 0
+        self.armor_width = 0
+        self.armor_half = 0
         self.armors = [[], [], [], [], [], [], [], []]      # 装甲板相对小车中心距离,前后左右
 
         self.reset_data = [local[0], local[1], angle, pitch]    # 保存输入的初始值
@@ -136,6 +138,7 @@ class CAR(object):
                 self.x + self.carWidth / 2, self.y - self.carLength / 2,
                 self.x + self.carWidth / 2, self.y + self.carLength / 2,
                 self.x - self.carWidth / 2, self.y + self.carLength / 2]
+        self.cover_area()
         return peak
 
     def cover_area(self):
@@ -196,6 +199,7 @@ class CAR(object):
         :param A: 一个小车对象
         :return: 哪个光条被看见
         """
+        self.get_armor()
         m = []
         for i in range(0, 8):
             for j in range(0, 4):
@@ -242,13 +246,13 @@ class CAR(object):
         """
         if carx.isdetected or max(carx.inSight):
             dir_angle = math.atan2(carx.y - self.y, carx.x - self.x) - self.angle
-            if abs(dir_angle - self.angle) > self.w_vel:
-                self.angle += dir_angle / abs(dir_angle) * self.w_vel
+            if abs(dir_angle - self.angle) > self.w_vel * 0.1:
+                self.angle += dir_angle / abs(dir_angle) * self.w_vel * 0.1
             else:
                 self.angle += dir_angle
         else:
-            if abs(0 - self.angle) > self.w_vel:
-                self.angle += -self.angle / abs(self.angle) * self.w_vel
+            if abs(0 - self.angle) > self.w_vel * 0.1:
+                self.angle += -self.angle / abs(self.angle) * self.w_vel * 0.1
             else:
                 self.angle += -self.angle
 
@@ -306,3 +310,22 @@ class CAR(object):
         self.y = (self.line_speed[0] * (math.sin(self.T * self.angular_speed + self.angle) - math.sin(self.angle)) -
                     self.line_speed[1] * (math.cos(self.T * self.angular_speed + self.angle) - math.cos(self.angle))) / self.angular_speed
         self.angle += self.angular_speed * self.T
+
+    def get_armor(self):
+        self.armors[0] = [self.x - self.armor_half, self.y - self.armor_length]
+        self.armors[1] = [self.x + self.armor_half, self.y - self.armor_length]
+        self.armors[2] = [self.x - self.armor_half, self.y + self.armor_length]
+        self.armors[3] = [self.x + self.armor_half, self.y + self.armor_length]
+        self.armors[4] = [self.x - self.armor_width, self.y - self.armor_half]
+        self.armors[5] = [self.x - self.armor_width, self.y + self.armor_half]
+        self.armors[6] = [self.x + self.armor_width, self.y - self.armor_half]
+        self.armors[7] = [self.x + self.armor_width, self.y + self.armor_half]
+
+
+        for i in range(8):
+            self.aromrs[i][0] = (self.aromrs[i][0]-self.x) * math.cos(self.angle) + \
+            (self.armors[i][1] - self.y) * math.sin(self.angle) + self.x
+
+            self.armors[i][1] = -1 * (self.armors[i][0] - self.x) * math.sin(self.angle) + \
+                                (self.armors[i][1] - self.y) * math.cos(self.angle) + self.y
+
