@@ -10,7 +10,7 @@ class CAR(object):
     def __init__(self, team, bullet, angle, pitch, mp, hpbuff = 0, bulletbuff = 0, debuff = 0, hp = 2000, heat = 0, local = (300, 300)):
         self.T = 0.1                # 循环周期 -> 0.1s
         self.team = team            # 0为红方，1为蓝方
-        self.mp = mp                # 地图属性
+        self.mp = mp
 
         self.hp = hp                # 小车血量
         self.bullet = bullet        # 子弹数
@@ -169,14 +169,7 @@ class CAR(object):
         self.heat = 0
         self.x = self.reset_data[0]
         self.y = self.reset_data[1]
-        self.HEAT_FREEZE = -120
         self.angle = self.reset_data[2]
-
-        self.v = 20
-        self.w_vel = math.pi
-        self.line_speed = [0, 0]
-        self.angular_speed = 0
-        self.angular_speed = 0
 
         self.pitch = self.reset_data[3]
         self.peak = self.get_peak()
@@ -189,8 +182,7 @@ class CAR(object):
 
         self.canattack = 0
         self.isdetected = self.get_isdetected()
-        self.inSight = [0, 0]
-        self.armors = [[], [], [], [], [], [], [], []]
+        self.inSight = [0, 0, 0, 0]
 
     def get_isdetected(self):
         if random.random() >= 0.7:
@@ -254,12 +246,18 @@ class CAR(object):
                 self.angle += dir_angle / abs(dir_angle) * self.w_vel
             else:
                 self.angle += dir_angle
+        else:
+            if abs(0 - self.angle) > self.w_vel:
+                self.angle += -self.angle / abs(self.angle) * self.w_vel
+            else:
+                self.angle += -self.angle
 
     def on_buff(self):
         """
         buff区判定函数
         :return: 对应buff区的编号,若未踩到buff区则返回0
         """
+        self.get_peak()
         for i in range(0, 6):
             if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
                 or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.area_start[i], self.mp.area_end[i])
@@ -273,6 +271,7 @@ class CAR(object):
         判断是否碰到障碍物
         :return: 0为未碰到,1为碰到
         """
+        self.get_peak()
         for i in range(0, 8):
             if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], self.mp.barrier_start[i], self.mp.barrier_start[i])
                 or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.barrier_start[i], self.mp.barrier_start[i])

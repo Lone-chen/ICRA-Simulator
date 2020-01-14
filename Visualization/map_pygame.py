@@ -323,12 +323,12 @@ def run_game():
         text_surfaceB[21] = font.render(str(Env.carB.on_barriers()), True, (255, 255, 255))
 
         text_enviroment[1] = font.render(str(Env.time / 10), True, (255, 255, 255))
-        text_enviroment[2] = font.render(str(Env.chufa[2]), True, (255, 255, 255))
-        text_enviroment[3] = font.render(str(Env.chufa[3]), True, (255, 255, 255))
-        text_enviroment[4] = font.render(str(Env.chufa[4]), True, (255, 255, 255))
-        text_enviroment[5] = font.render(str(Env.chufa[5]), True, (255, 255, 255))
-        text_enviroment[6] = font.render(str(Env.chufa[6]), True, (255, 255, 255))
-        text_enviroment[7] = font.render(str(Env.chufa[7]), True, (255, 255, 255))
+        text_enviroment[2] = font.render(str(Env.chufa[0]), True, (255, 255, 255))
+        text_enviroment[3] = font.render(str(Env.chufa[1]), True, (255, 255, 255))
+        text_enviroment[4] = font.render(str(Env.chufa[2]), True, (255, 255, 255))
+        text_enviroment[5] = font.render(str(Env.chufa[3]), True, (255, 255, 255))
+        text_enviroment[6] = font.render(str(Env.chufa[4]), True, (255, 255, 255))
+        text_enviroment[7] = font.render(str(Env.chufa[5]), True, (255, 255, 255))
         text_enviroment[8] = font.render(str(Env.Afire), True, (255, 255, 255))
         text_enviroment[9] = font.render(str(Env.Bfire), True, (255, 255, 255))
 

@@ -8,9 +8,10 @@ import math
 
 class ver_env(object):
     def __init__(self):
-        self.carA = CAR(0, 50, 0, 0, local=(398, 50))
-        self.carB = CAR(1, 50, math.pi/2, 0, local=(799, 50))
         self.map = MAP()
+        self.carA = CAR(0, 50, 0, 0, self.map, local=(398, 50))
+        self.carB = CAR(1, 50, math.pi/2, 0,self.map, local=(799, 50))
+
         self.Afire = 0
         self.Bfire = 0
         self.time = 1800
@@ -18,6 +19,8 @@ class ver_env(object):
         self.inf = -10000
         self.build_match()
         self.chufa = [0, 0, 0, 0, 0, 0]
+        self.area_x = [0, 0, 0, 0, 0, 0]
+        self.area_y = [0, 0, 0, 0, 0, 0]
         self.old_sA = observation()
         self.old_sB = observation()
 
@@ -82,6 +85,11 @@ class ver_env(object):
         sB.canattack = self.carB.visual_field(self.carA)
         sB.myfire = self.Bfire
 
+        if self.time == 1800 or self.time == 1200 or self.time == 600:
+            self.refresh_buff()
+        self.check_on_buff(self.carA)
+        self.check_on_buff(self.carB)
+
         if actionA.fire == 1:
             self.carA.attack(self.carB)
             self.Afire = 1
@@ -94,8 +102,37 @@ class ver_env(object):
         else:
             self.Bfire = 0
 
-        self.check_on_buff(self.carA)
-        self.check_on_buff(self.carB)
+
+
+        sA.myhp = self.carA.hp
+        sA.mybullet = self.carA.bullet
+        sA.myheat = self.carA.heat
+        sA.enemyhp = self.carB.hp
+        sA.enemybullet = self.carB.bullet
+        sA.mydebeff_shoot = self.carA.shoot_forbiden
+        sA.mydebeff_move = self.carA.move_forbiden
+        sA.chufa = self.chufa
+        sA.area_x = self.area_x
+        sA.area_y = self.area_y
+
+        sB.myhp = self.carB.hp
+        sB.mybullet = self.carB.bullet
+        sB.myheat = self.carB.heat
+        sB.enemyhp = self.carA.hp
+        sB.enemybullet = self.carA.bullet
+        sB.mydebeff_shoot = self.carB.shoot_forbiden
+        sB.mydebeff_move = self.carB.move_forbiden
+        sB.chufa = self.chufa
+        sB.area_x = self.area_x
+        sB.area_y = self.area_y
+
+        self.carA.aiming(self.carB)
+        sA.mypitch = self.carA.pitch
+
+        self.carB.aiming(self.carA)
+        sB.mypitch = self.carB.pitch
+
+
 
         rA = rf.reward(self.old_sA, sA, 0)
         rB = rf.reward(self.old_sB, sB, 1)
@@ -134,22 +171,24 @@ class ver_env(object):
             if i == 2:
                 self.carA.hp = min(2000, self.carA.hp + 200)
                 self.carA.hpbuff = 1
-                self.chufa[i] = 1
+                self.chufa[i-2] = 1
             if i == 3:
                 self.carB.hp = min(2000, self.carB.hp + 200)
                 self.carB.hpbuff = 1
-                self.chufa[i] = 1
+                self.chufa[i-2] = 1
             if i == 4:
                 self.carA.bullet += 100
                 self.carA.bulletbuff = 1
-                self.chufa[i] = 1
+                self.chufa[i-2] = 1
             if i == 5:
                 self.carB.bullet += 100
                 self.carB.bulletbuff = 1
-                self.chufa[i] = 1
+                self.chufa[i-2] = 1
             if i == 6:
                 carx.move_forbiden = 10
-                self.chufa[i] = 1
+                self.chufa[i-2] = 1
             if i == 7:
                 carx.shoot_forbiden = 10
-                self.chufa[i] = 1
+                self.chufa[i-2] = 1
+    def refresh_buff(self):
+        pass
