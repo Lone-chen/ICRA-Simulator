@@ -191,7 +191,7 @@ class ver_env(object):
                 carx.shoot_forbiden = 10
                 self.chufa[i-2] = 1
 
-    def refreash_buff(self):
+    def refresh_buff(self):
         self.map.areas_rand()
         for i in range(0, 6):
             if self.map.areas[i] == 2:
