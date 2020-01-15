@@ -16,6 +16,10 @@ def get_lines_(x1, y1, x2, y2):
     (x1,y1)(x2,y2) 满足x1<=x2
     :return: [(a1,b1),....] (ai,bi)为包含于线段的坐标点
     """
+    x1 = int(x1)
+    y1 = int(y1)
+    x2 = int(x2)
+    y2 = int(y2)
     line = []
     if y1 >= y2:
         bottom = y1

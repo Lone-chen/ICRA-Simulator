@@ -26,7 +26,7 @@ def barrier_visual(x, y, x_car, y_car):
     """
     list = main.get_line.get_lines(x, y, x_car, y_car)
     for i, j in list:
-        if C.map[i][j] == 1:
+        if i < 448 and j < 808 and (C.map[i][j] == 1 or C.map[i][j] == 8):
             return 0
     return 1  # 光条未被障碍物阻挡则返回1
 

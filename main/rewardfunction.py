@@ -2,11 +2,19 @@ def reward(s, s_, id):
     my_forbidden = s.chufa[4] + s.chufa[5]
     my_forbidden_ = s_.chufa[4] + s_.chufa[5]
     if id == 0:
+        my_hp_addition = s.chufa[2]
+        my_hp_addition_ = s_.chufa[2]
+        my_bullet_addition = s.chufa[4]
+        my_bullet_addition_ = s_.chufa[4]
         enemy_hp_addition = s.chufa[1]
         enemy_hp_addition_ = s_.chufa[1]
         enemy_bullet_addition = s.chufa[3]
         enemy_bullet_addition_ = s_.chufa[3]
     else:
+        my_hp_addition = s.chufa[1]
+        my_hp_addition_ = s_.chufa[1]
+        my_bullet_addition = s.chufa[3]
+        my_bullet_addition_ = s_.chufa[3]
         enemy_hp_addition = s.chufa[0]
         enemy_hp_addition_ = s_.chufa[0]
         enemy_bullet_addition = s.chufa[4]
@@ -23,7 +31,7 @@ def reward(s, s_, id):
     # enemy_hp
     enemy_hp_a1 = 15
     enemy_hp_a2 = 20
-    if s_.enemy_hp >= 500:
+    if s_.enemyhp >= 500:
         f_enemy_hp = -1 * (s_.enemyhp - s.myhp) * enemy_hp_a1
     else:
         f_enemy_hp = -1 * (s_.enemyhp - s.myhp) * enemy_hp_a2
@@ -41,14 +49,14 @@ def reward(s, s_, id):
 
     # my_hp_addition
     my_hp_addition_a1 = 200
-    if s_.time % 60 >= 20 and s.my_hp_addition == 0 and s_.my_hp_addition == 1:
+    if s_.remaintime % 60 >= 20 and my_hp_addition == 0 and my_hp_addition_ == 1:
         f_my_hp_addition = my_hp_addition_a1
     else:
         f_my_hp_addition = 0
 
     # my_bullet_addition
     my_bullet_addition_a1 = 200
-    if s.my_bullet_addition == 0 and s_.my_bullet_addition == 1:
+    if my_bullet_addition == 0 and my_bullet_addition_ == 1:
         f_my_bullet_addition = my_bullet_addition_a1
     else:
         f_my_bullet_addition = 0

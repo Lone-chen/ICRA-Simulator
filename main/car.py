@@ -21,17 +21,18 @@ class CAR(object):
 
         self.v = 20                 # 子弹发射速度
         self.w_vel = math.pi        # 炮台旋转速度
-        self.line_speed_xmax = 0    # x轴最大线速度
-        self.line_speed_ymax = 0    # y轴最大速度
-        self.angular_speed_max = 0  # 最大角速度
+        self.line_speed_xmax = 330    # x轴最大线速度
+        self.line_speed_ymax = 330    # y轴最大速度
+        self.angular_speed_max = 1.67  # 最大角速度
         self.line_speed = [0, 0]    # 线速度
         self.angular_speed = 0      # 角速度
 
 
-        self.carLength = 600            # 小车纵向长度
-        self.carWidth = 450             # 小车横向长度
+        self.carLength = 60            # 小车纵向长度
+        self.carWidth = 45              # 小车横向长度
         self.pitch = pitch              # 炮台水平角度
-        self.peak = self.get_peak()     # 小车顶点数组
+        self.peak = []                  # 小车顶点数组
+        self.get_peak()
 
         self.hpbuff = hpbuff            # 加血buff
         self.bulletbuff = bulletbuff    # 补弹buff
@@ -42,10 +43,11 @@ class CAR(object):
         self.canattack = 0                                  # 小车能否射击
         self.isdetected = self.get_isdetected()             # 小车是否被敌方观察到
         self.inSight = [0, 0, 0, 0]                         # 敌方车辆是否在视野内 0->不在 1->在
-        self.armor_length = 0
-        self.armor_width = 0
-        self.armor_half = 0
+        self.armor_length = 27
+        self.armor_width = 19
+        self.armor_half = 7
         self.armors = [[], [], [], [], [], [], [], []]      # 装甲板相对小车中心距离,前后左右
+        self.get_armor()
 
         self.reset_data = [local[0], local[1], angle, pitch]    # 保存输入的初始值
 
@@ -134,12 +136,12 @@ class CAR(object):
         self.pitch += change
 
     def get_peak(self):
-        peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
+        self.peak = [self.x - self.carWidth / 2, self.y - self.carLength / 2,
                 self.x + self.carWidth / 2, self.y - self.carLength / 2,
                 self.x + self.carWidth / 2, self.y + self.carLength / 2,
                 self.x - self.carWidth / 2, self.y + self.carLength / 2]
+
         self.cover_area()
-        return peak
 
     def cover_area(self):
         """
@@ -147,20 +149,32 @@ class CAR(object):
         点旋转计算公式：
         srx = (x-pointx)*cos(angle) + (y-pointy)*sin(angle)+pointx
         sry = (y-pointy)*cos(angle) - (x-pointx)*sin(angle)+pointy
+
         nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
-        nry = (x-pointy)*sin(angle) + (y-pointy)*cos(angle)+pointy
+        nry = (y-pointy)*sin(angle) + (y-pointy)*cos(angle)+pointy
         :param MAP: map地图
         :return:顶点坐标数组peak
         """
         # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标，顺时针
-        self.peak[0] = int((self.peak[0] - self.x) * math.cos(self.angle) - ((self.peak[1] - self.y) * math.sin(self.angle))) + self.x
-        self.peak[1] = int((self.peak[0] - self.x) * math.sin(self.angle) + ((self.peak[1] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[2] = int((self.peak[2] - self.x) * math.cos(self.angle) - ((self.peak[3] - self.y) * math.sin(self.angle))) + self.x
-        self.peak[3] = int((self.peak[2] - self.x) * math.sin(self.angle) + ((self.peak[3] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[4] = int((self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y) * math.sin(self.angle))) + self.x
-        self.peak[5] = int((self.peak[4] - self.x) * math.sin(self.angle) + ((self.peak[5] - self.y) * math.cos(self.angle))) + self.y
-        self.peak[6] = int((self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y) * math.sin(self.angle))) + self.x
-        self.peak[7] = int((self.peak[6] - self.x) * math.sin(self.angle) + ((self.peak[7] - self.y) * math.cos(self.angle))) + self.y
+        self.peak[0] = int(
+            (self.peak[0] - self.x) * math.cos(self.angle) + ((self.peak[1] - self.y) * math.sin(self.angle))) + self.x
+        self.peak[1] = int(
+            (self.peak[1] - self.y) * math.cos(self.angle) - ((self.peak[0] - self.x) * math.sin(self.angle))) + self.y
+
+        self.peak[2] = int(
+            (self.peak[2] - self.x) * math.cos(self.angle) + ((self.peak[3] - self.y) * math.sin(self.angle))) + self.x
+        self.peak[3] = int(
+            (self.peak[3] - self.y) * math.cos(self.angle) - ((self.peak[2] - self.x) * math.sin(self.angle))) + self.y
+
+        self.peak[4] = int(
+            (self.peak[4] - self.x) * math.cos(self.angle) - ((self.peak[5] - self.y) * math.sin(self.angle))) + self.x
+        self.peak[5] = int(
+            (self.peak[5] - self.y) * math.cos(self.angle) + ((self.peak[4] - self.x) * math.sin(self.angle))) + self.y
+
+        self.peak[6] = int(
+            (self.peak[6] - self.x) * math.cos(self.angle) - ((self.peak[7] - self.y) * math.sin(self.angle))) + self.x
+        self.peak[7] = int(
+            (self.peak[7] - self.x) * math.cos(self.angle) + ((self.peak[6] - self.x) * math.sin(self.angle))) + self.y
 
     def reset(self):
         """
@@ -175,7 +189,7 @@ class CAR(object):
         self.angle = self.reset_data[2]
 
         self.pitch = self.reset_data[3]
-        self.peak = self.get_peak()
+        self.get_peak()
 
         self.hpbuff = 0
         self.bulletbuff = 0
@@ -186,6 +200,8 @@ class CAR(object):
         self.canattack = 0
         self.isdetected = self.get_isdetected()
         self.inSight = [0, 0, 0, 0]
+        self.get_armor()
+
 
     def get_isdetected(self):
         if random.random() >= 0.7:
@@ -199,13 +215,27 @@ class CAR(object):
         :param A: 一个小车对象
         :return: 哪个光条被看见
         """
-        self.get_armor()
-        m = []
+        A.get_armor()
+        A.get_peak()
+        m = [0,0,0,0,0,0,0,0]
         for i in range(0, 8):
-            for j in range(0, 4):
-                m[i] = main.intersect.is_inter(A.peak[j], A.peak[j + 1], A.armors[i], [self.x, self.y])
+            m[i] = main.intersect.is_inter([A.peak[0], A.peak[1]], [A.peak[2], A.peak[3]], A.armors[i],
+                                           [self.x, self.y])
+            if m[i] == 1:
+                break
+            else:
+                m[i] = main.intersect.is_inter([A.peak[2], A.peak[3]], [A.peak[4], A.peak[5]], A.armors[i],
+                                               [self.x, self.y])
                 if m[i] == 1:
                     break
+                else:
+                    m[i] = main.intersect.is_inter([A.peak[4], A.peak[5]], [A.peak[6], A.peak[7]], A.armors[i],
+                                                   [self.x, self.y])
+                    if m[i] == 1:
+                        break
+                    else:
+                        m[i] = main.intersect.is_inter([A.peak[0], A.peak[1]], [A.peak[6], A.peak[7]], A.armors[i],
+                                                       [self.x, self.y])
 
         if m[0] == 0 and m[1] == 0 and main.visual_judge.visual(A.armors[0][0], A.armors[0][1], A.armors[1][0], A.armors[1][1], self.x, self.y, self.angle, self.pitch):
             self.inSight[0] = 1
@@ -323,7 +353,7 @@ class CAR(object):
 
 
         for i in range(8):
-            self.aromrs[i][0] = (self.aromrs[i][0]-self.x) * math.cos(self.angle) + \
+            self.armors[i][0] = (self.armors[i][0]-self.x) * math.cos(self.angle) + \
             (self.armors[i][1] - self.y) * math.sin(self.angle) + self.x
 
             self.armors[i][1] = -1 * (self.armors[i][0] - self.x) * math.sin(self.angle) + \

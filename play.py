@@ -163,7 +163,7 @@ class ver_env(object):
         if self.time == 0:
             self.done = 1
         # 碰撞
-        if self.strick_on_car(self.carA, self.carB):
+        if self.strick_on_car():
             rA = self.inf
             rB = self.inf
             self.done = 1
@@ -230,7 +230,7 @@ class ver_env(object):
                 self.area_y[2] = (self.map.area_start[2][1] + self.map.area_end[2][1]) / 2
             elif self.map.areas[i] == 5:
                 self.chufa[3] = 0
-                self.area_x[3] = (self.map.area_start[3][0] + self.map.area_end[3[0]]) / 2
+                self.area_x[3] = (self.map.area_start[3][0] + self.map.area_end[3][0]) / 2
                 self.area_y[3] = (self.map.area_start[3][1] + self.map.area_end[3][1]) / 2
             elif self.map.areas[i] == 6:
                 self.chufa[4] = 0
@@ -241,24 +241,24 @@ class ver_env(object):
                 self.area_x[5] = (self.map.area_start[5][0] + self.map.area_end[5][0]) / 2
                 self.area_y[5] = (self.map.area_start[5][1] + self.map.area_end[5][1]) / 2
 
-    def strick_on_car(car_A, car_B):
+    def strick_on_car(self):
         """
-        判断car_A是否与car_B相碰撞
-        :param car_A: 己方car对象
-        :param car_B: 另一car对象
+        判断self.carA是否与self.carB相碰撞
+        :param self.carA: 己方car对象
+        :param self.carB: 另一car对象
         :return: 0为未碰撞，1为发生碰撞
         """
         for i in range(0, 4):
-            if (main.intersect.is_inter([car_A.peak[0], car_A.peak[1]], [car_A.peak[6], car_A.peak[7]],
-                                        [car_B.peak[i], car_B.peak[i + 1]], [car_B.peak[i + 2], car_B.peak[i + 3]])
-                    or main.intersect.is_inter([car_A.peak[0], car_A.peak[1]], [car_A.peak[2], car_A.peak[3]],
-                                               [car_B.peak[i], car_B.peak[i + 1]],
-                                               [car_B.peak[i + 2], car_B.peak[i + 3]])
-                    or main.intersect.is_inter([car_A.peak[4], car_A.peak[5]], [car_A.peak[6], car_A.peak[7]],
-                                               [car_B.peak[i], car_B.peak[i + 1]],
-                                               [car_B.peak[i + 2], car_B.peak[i + 3]])
-                    or main.intersect.is_inter([car_A.peak[2], car_A.peak[3]], [car_A.peak[4], car_A.peak[5]],
-                                               [car_B.peak[i], car_B.peak[i + 1]],
-                                               [car_B.peak[i + 2], car_B.peak[i + 3]])):
+            if (main.intersect.is_inter([self.carA.peak[0], self.carA.peak[1]], [self.carA.peak[6], self.carA.peak[7]],
+                                        [self.carB.peak[i], self.carB.peak[i + 1]], [self.carB.peak[i + 2], self.carB.peak[i + 3]])
+                    or main.intersect.is_inter([self.carA.peak[0], self.carA.peak[1]], [self.carA.peak[2], self.carA.peak[3]],
+                                               [self.carB.peak[i], self.carB.peak[i + 1]],
+                                               [self.carB.peak[i + 2], self.carB.peak[i + 3]])
+                    or main.intersect.is_inter([self.carA.peak[4], self.carA.peak[5]], [self.carA.peak[6], self.carA.peak[7]],
+                                               [self.carB.peak[i], self.carB.peak[i + 1]],
+                                               [self.carB.peak[i + 2], self.carB.peak[i + 3]])
+                    or main.intersect.is_inter([self.carA.peak[2], self.carA.peak[3]], [self.carA.peak[4], self.carA.peak[5]],
+                                               [self.carB.peak[i], self.carB.peak[i + 1]],
+                                               [self.carB.peak[i + 2], self.carB.peak[i + 3]])):
                 return 1
             return 0

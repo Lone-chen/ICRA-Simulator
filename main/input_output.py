@@ -44,5 +44,5 @@ class action(object):
     def __init__(self, actions):
         self.x_vel = actions[0]
         self.y_vel = actions[1]
-        self.w = action[2]
+        self.w = actions[2]
         self.fire = actions[3]
