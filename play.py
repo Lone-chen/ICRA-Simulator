@@ -66,8 +66,10 @@ class ver_env(object):
         actionB = action(actionB)
         sA = observation()
         sB = observation()
-        self.carA.change_location((actionA.x_vel, actionA.y_vel), actionA.w)
-        self.carB.change_location((actionB.x_vel, actionB.y_vel), actionA.w)
+        if self.carA.move_forbiden == 0:
+            self.carA.change_location((actionA.x_vel, actionA.y_vel), actionA.w)
+        if self.carB.move_forbiden == 0:
+            self.carB.change_location((actionB.x_vel, actionB.y_vel), actionA.w)
         self.carA.get_isdetected()
         self.carB.get_isdetected()
 
@@ -101,14 +103,20 @@ class ver_env(object):
         self.check_on_buff(self.carB)
 
         if actionA.fire == 1:
-            self.carA.attack(self.carB)
-            self.Afire = 1
+            if self.carA.shoot_forbiden == 0:
+                self.carA.attack(self.carB)
+                self.Afire = 1
+            else:
+                self.Afire = 0
         else:
             self.Afire = 0
 
         if actionB.fire == 1:
-            self.carB.attack(self.carA)
-            self.Bfire = 1
+            if self.carB.shoot_forbiden == 0:
+                self.carB.attack(self.carA)
+                self.Bfire = 1
+            else:
+                self.Bfire = 0
         else:
             self.Bfire = 0
 
