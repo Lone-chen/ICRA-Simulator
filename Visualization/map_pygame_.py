@@ -10,151 +10,71 @@ import time
 A = MAP()
 Env = ver_env()
 
-class Ship():
-    def __init__(self, screen):
-        """初始化"""
-        self.begin_angle1 = math.atan(2/3)
-        self.begin_angle2 = math.atan(3/2)
-        self.screen = screen
-        self.x = [0, 0, 0, 0]
-        self.y = [0, 0, 0, 0]
-        self.l = math.sqrt(20*20 + 30*30)
-        # 加载图像
-        self.newimage = pygame.image.load('../image/gimbal_g.png')
-        self.newgimimage = pygame.image.load('../image/gimbal_g.png')
-        self.new_gimimage = pygame.image.load('../image/gimbal_g.png')
-        self.gimimage = pygame.image.load('../image/gimbal_g.png')
-        self.image = pygame.image.load('../image/chassis_g.png')
-        self.gim_rect = self.gimimage.get_rect()
-        self.rect = self.image.get_rect()
-        self.screen_rect = screen.get_rect()
-        # 初始位置
-        self.rect.centerx = 600
-        self.rect.centery = 450
-        self.gim_rect.centerx = 600
-        self.gim_rect.centery = 450
-        # 移动控制
-        self.moving_right = False
-        self.moving_left = False
-        self.moving_up = False
-        self.moving_down = False
-        # 加速度控制
-        self.acel_right = 0
-        self.acel_left = 0
-        self.acel_up = 0
-        self.acel_down = 0
-        # 障碍物碰撞控制
-        self.barrairs = True
-        # 加速度控制
-        self.angle = 0
-        self.gimangle = 0
-        self._angle_a = 0
-        self.gim_angle_a = 0
-
-    def judeg(self):
-        self.barrairs = True
-        self.x[0] = self.rect.centerx - math.sin(self.begin_angle1 - self.angle) * self.l
-        self.y[0] = self.rect.centery - math.cos(self.begin_angle1 - self.angle) * self.l
-        self.x[1] = self.rect.centerx + math.cos(self.begin_angle2 - self.angle) * self.l
-        self.y[1] = self.rect.centery - math.sin(self.begin_angle2 - self.angle) * self.l
-        self.x[2] = self.rect.centerx + math.sin(self.begin_angle1 - self.angle) * self.l
-        self.y[2] = self.rect.centery + math.cos(self.begin_angle1 - self.angle) * self.l
-        self.x[3] = self.rect.centerx - math.cos(self.begin_angle2 - self.angle) * self.l
-        self.y[3] = self.rect.centery + math.sin(self.begin_angle2 - self.angle) * self.l
-        for i in range(0, 4):
-            for j in range(i + 1, 4):
-                list = main.get_line.get_lines(int(self.x[i]), int(self.y[i]), int(self.x[j]), int(self.y[j]))
-                for p, q in list:
-                    if (p>0 and p<A.length and q>0 and q<A.width and A.map[q][p] == 1) or p >= A.length:
-                        self.barrairs = False
-        return self.barrairs
-
-    def update(self):
-        self.angle += self._angle_a
-        self.gimangle += self.gim_angle_a
-        if self.moving_right and self.rect.right < self.screen_rect.right:
-            self.rect.centerx += self.acel_right
-            self.gim_rect.centerx += self.acel_right
-            if self.judeg() == False:
-                self.rect.centerx -= self.acel_right
-                self.gim_rect.centerx -= self.acel_right
-        if self.moving_left and self.rect.left > self.screen_rect.left:
-            self.rect.centerx -= self.acel_right
-            self.gim_rect.centerx -= self.acel_right
-            if self.judeg() == False:
-                self.rect.centerx += self.acel_right
-                self.gim_rect.centerx += self.acel_right
-        if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
-            self.rect.centery += self.acel_up
-            self.gim_rect.centery += self.acel_up
-            if self.judeg() == False:
-                self.rect.centery -= self.acel_up
-                self.gim_rect.centery -= self.acel_up
-        if self.moving_up and self.rect.top > self.screen_rect.top and self.barrairs:
-            self.rect.centery -= self.acel_up
-            self.gim_rect.centery -= self.acel_up
-            if self.judeg() == False:
-                self.rect.centery += self.acel_up
-                self.gim_rect.centery += self.acel_up
-        self.newimage = pygame.transform.rotate(self.image, self.angle)
-        self.rect = self.newimage.get_rect(center=self.rect.center)
-        self.newgimimage = pygame.transform.rotate(self.gimimage, self.angle)
-        self.gim_rect = self.newgimimage.get_rect(center=self.gim_rect.center)
-        self.new_gimimage = pygame.transform.rotate(self.newgimimage, self.gimangle)
-        self.gim_rect = self.new_gimimage.get_rect(center=self.gim_rect.center)
-
-    def blitme(self):
-        self.screen.blit(self.newimage, self.rect)
-        self.screen.blit(self.new_gimimage, self.gim_rect)
-
-
-def check_event(ship):
+def check_event(Env):
     for event in pygame.event.get():
         if event.type == QUIT:  # 接收到退出事件后退出程序
             sys.exit()
 
         elif event.type == KEYDOWN:
             if event.key == pygame.K_RIGHT:
-                ship.moving_right = True
+                Env.carA.line_speed[0] = 25
             elif event.key == pygame.K_LEFT:
-                ship.moving_left = True
+                Env.carA.line_speed[0] = -25
             elif event.key == pygame.K_UP:
-                ship.moving_up = True
+                Env.carA.line_speed[1] = 25
             elif event.key == pygame.K_DOWN:
-                ship.moving_down = True
+                Env.carA.line_speed[1] = -25
             elif event.key == pygame.K_w:
-                ship.acel_up += 1
+                Env.carA.angular_speed = 10
             elif event.key == pygame.K_s:
-                ship.acel_up -= 1
-            elif event.key == pygame.K_a:
-                ship.acel_right -= 1
-            elif event.key == pygame.K_d:
-                ship.acel_right += 1
-            elif event.key == K_h:
-                ship.gim_angle_a = ship.gim_angle_a - math.radians(100)
-            elif event.key == K_f:
-                ship.gim_angle_a = ship.gim_angle_a + math.radians(100)
-            elif event.key == K_t:
-                ship._angle_a = ship._angle_a + math.radians(100)
-            elif event.key == K_g:
-                ship._angle_a = ship._angle_a - math.radians(100)
+                Env.carA.angular_speed = -10
+            elif event.key == K_a:
+                Env.carA.w_vel = math.pi / 2
+            elif event.key == K_d:
+                Env.carA.w_vel = -math.pi / 2
 
         elif event.type == KEYUP:
             if event.key == pygame.K_RIGHT:
-                ship.moving_right = False
+                Env.carA.line_speed[0] = 0
             elif event.key == pygame.K_LEFT:
-                ship.moving_left = False
+                Env.carA.line_speed[0] = 0
             elif event.key == pygame.K_UP:
-                ship.moving_up = False
+                Env.carA.line_speed[1] = 0
             elif event.key == pygame.K_DOWN:
-                ship.moving_down = False
-            ship._angle_ = 0
+                Env.carA.line_speed[1] = 0
+            elif event.key == pygame.K_w:
+                Env.carA.angular_speed = 0
+            elif event.key == pygame.K_s:
+                Env.carA.angular_speed = 0
+            elif event.key == K_a:
+                Env.carA.w_vel = 0
+            elif event.key == K_d:
+                Env.carA.w_vel = 0
 
 
 def run_game():
     pygame.init()
     SCREEN_SIZE = (1450, A.width)
     screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
+    screen_rect = screen.get_rect()
+
+    # 加载图像
+    newimage_A = pygame.image.load('../image/gimbal_g.png')
+    newgimimage_A = pygame.image.load('../image/gimbal_g.png')
+    new_gimimage_A = pygame.image.load('../image/gimbal_g.png')
+    gimimage_A = pygame.image.load('../image/gimbal_g.png')
+    image_A = pygame.image.load('../image/chassis_g.png')
+    gim_rect_A = gimimage_A.get_rect()
+
+
+    newimage_B = pygame.image.load('../image/gimbal_g.png')
+    newgimimage_B = pygame.image.load('../image/gimbal_g.png')
+    new_gimimage_B = pygame.image.load('../image/gimbal_g.png')
+    gimimage_B = pygame.image.load('../image/gimbal_g.png')
+    image_B = pygame.image.load('../image/chassis_g.png')
+    gim_rect_B = gimimage_B.get_rect()
+
+
     pygame.display.set_caption("map")
     R1 = pygame.image.load("../image/1.png").convert()
     R2 = pygame.image.load("../image/2.png").convert()
@@ -163,9 +83,10 @@ def run_game():
     B1_ = pygame.image.load("../image/4_.png").convert()
     B2 = pygame.image.load("../image/5.png").convert()
     B3 = pygame.image.load("../image/7.png").convert()
+
     # clock对象
     clock = pygame.time.Clock()
-    car1 = Ship(screen)
+
     # 字体显示
     text_surface = []
     for i in range(0, 22):
@@ -215,6 +136,19 @@ def run_game():
         screen.fill((0, 0, 0))
         x = [820, 1040, 1260]
 
+        rect_A = newimage_A.get_rect()
+        rect_A.centerx = Env.carA.x
+        rect_A.centery = Env.carA.y
+        gim_rect_A.centerx = Env.carA.x
+        gim_rect_A.centery = Env.carA.y
+
+
+        rect_B = newimage_B.get_rect()
+        rect_B.centerx = Env.carB.x
+        rect_B.centery = Env.carB.y
+        gim_rect_B.centerx = Env.carB.x
+        gim_rect_B.centery = Env.carB.y
+
         time_passed = clock.tick()
 
         for i in range(0, A.width):
@@ -249,10 +183,87 @@ def run_game():
         screen.blit(F, A.area_start[4])
         screen.blit(F, A.area_start[5])
 
-        car1.blitme()
+        screen.blit(newimage_A, rect_A)
+        screen.blit(new_gimimage_A, gim_rect_A)
+        screen.blit(newimage_B, rect_B)
+        screen.blit(new_gimimage_B, gim_rect_B)
 
-        check_event(car1)
-        car1.update()
+        check_event(Env)
+
+        # 更新属性
+        Env.carA.angle = (Env.carA.angle + Env.carA.angular_speed) % 360
+        Env.carA.pitch = (Env.carA.pitch + Env.carA.w_vel) % 360
+
+        Env.carB.angle = (Env.carB.angle + Env.carB.angular_speed) % 360
+        Env.carB.pitch = (Env.carB.pitch + Env.carB.w_vel) % 360
+        Env.carB.x += Env.carB.line_speed[0] * 0.1
+        Env.carB.y += Env.carB.line_speed[1] * 0.1
+
+        # 判断A，B是否撞到障碍物或者墙壁
+        if Env.carA.line_speed[0] > 0 and rect_A.right < A.length:
+            Env.carA.x += Env.carA.line_speed[0] * 0.1
+            if Env.carA.on_barriers() == 1:
+                Env.carA.x -= Env.carA.line_speed[0] * 0.1
+            rect_A.centerx = Env.carA.x
+            gim_rect_A.centerx = Env.carA.x
+        if Env.carA.line_speed[0] < 0 and rect_A.left > 0:
+            Env.carA.x += Env.carA.line_speed[0] * 0.1
+            if Env.carA.on_barriers() == 1:
+                Env.carA.x -= Env.carA.line_speed[0] * 0.1
+            rect_A.centerx = Env.carA.x
+            gim_rect_A.centerx = Env.carA.x
+        if Env.carA.line_speed[1] > 0 and rect_A.top > screen_rect.top:
+            Env.carA.y += Env.carA.line_speed[1] * 0.1
+            if Env.carA.on_barriers() == 1:
+                Env.carA.y -= Env.carA.line_speed[1] * 0.1
+            rect_A.centery = Env.carA.y
+            gim_rect_A.centery = Env.carA.y
+        if Env.carA.line_speed[1] < 0 and rect_A.bottom < screen_rect.bottom:
+            Env.carA.y += Env.carA.line_speed[1] * 0.1
+            if Env.carA.on_barriers() == 1:
+                Env.carA.y -= Env.carA.line_speed[1] * 0.1
+            rect_A.centery = Env.carA.y
+            gim_rect_A.centery = Env.carA.y
+
+        if Env.carB.line_speed[0] > 0 and rect_B.right < A.length:
+            Env.carB.x += Env.carB.line_speed[0] * 0.1
+            if Env.carB.on_barriers() == 1:
+                Env.carB.x -= Env.carB.line_speed[0] * 0.1
+            rect_B.centerx = Env.carB.x
+            gim_rect_B.centerx = Env.carB.x
+        if Env.carB.line_speed[0] < 0 and rect_B.left > 0:
+            Env.carB.x += Env.carB.line_speed[0] * 0.1
+            if Env.carB.on_barriers() == 1:
+                Env.carB.x -= Env.carB.line_speed[0] * 0.1
+            rect_B.centerx = Env.carB.x
+            gim_rect_B.centerx = Env.carB.x
+        if Env.carB.line_speed[1] > 0 and rect_B.top > screen_rect.top:
+            Env.carB.y += Env.carB.line_speed[1] * 0.1
+            if Env.carB.on_barriers() == 1:
+                Env.carB.y -= Env.carB.line_speed[1] * 0.1
+            rect_B.centery = Env.carB.y
+            gim_rect_B.centery = Env.carB.y
+        if Env.carB.line_speed[1] < 0 and rect_B.bottom < screen_rect.bottom:
+            Env.carB += Env.carB.line_speed[1] * 0.1
+            if Env.carB.on_barriers() == 1:
+                Env.carB.y -= Env.carB.line_speed[1] * 0.1
+            rect_B.centery = Env.carB.y
+            gim_rect_A.centery = Env.carA.y
+
+        # 更新图像
+        newimage_A = pygame.transform.rotate(image_A, Env.carA.angle)
+        rect_A = newimage_A.get_rect(center=rect_A.center)
+        newgimimage_A = pygame.transform.rotate(gimimage_A, Env.carA.angle)
+        gim_rect_A = newgimimage_A.get_rect(center=gim_rect_A.center)
+        new_gimimage_A = pygame.transform.rotate(newgimimage_A, Env.carA.pitch)
+        gim_rect_A = new_gimimage_A.get_rect(center=gim_rect_A.center)
+
+        newimage_B = pygame.transform.rotate(image_B, Env.carB.angle)
+        rect_B = newimage_B.get_rect(center=rect_B.center)
+        newgimimage_B = pygame.transform.rotate(gimimage_B, Env.carB.angle)
+        gim_rect_B = newgimimage_B.get_rect(center=gim_rect_B.center)
+        new_gimimage_B = pygame.transform.rotate(newgimimage_B, Env.carB.pitch)
+        gim_rect_B = new_gimimage_B.get_rect(center=gim_rect_B.center)
 
         screen.blit(textA_surface, (x[0], 20))
         for i in range(0, 22):
@@ -279,18 +290,18 @@ def run_game():
         text_surfaceA[0] = font.render(str(Env.carA.hp), True, (255, 255, 255))
         text_surfaceA[1] = font.render(str(Env.carA.bullet), True, (255, 255, 255))
         text_surfaceA[2] = font.render(str(Env.carA.heat), True, (255, 255, 255))
-        text_surfaceA[3] = font.render(str(Env.carA.x), True, (255, 255, 255))
-        text_surfaceA[4] = font.render(str(Env.carA.y), True, (255, 255, 255))
+        text_surfaceA[3] = font.render(str(round(Env.carA.x, 2)), True, (255, 255, 255))
+        text_surfaceA[4] = font.render(str(round(Env.carA.y, 2)), True, (255, 255, 255))
         text_surfaceA[5] = font.render(str(Env.carA.HEAT_FREEZE), True, (255, 255, 255))
         text_surfaceA[6] = font.render(str(round(Env.carA.angle, 2)), True, (255, 255, 255))
         text_surfaceA[7] = font.render("", True, (255, 255, 255))
-        text_surfaceA[8] = font.render(str(Env.carA.v), True, (255, 255, 255))
+        text_surfaceA[8] = font.render(str(round(Env.carA.v, 2)), True, (255, 255, 255))
         text_surfaceA[9] = font.render(str(round(Env.carA.w_vel, 2)), True, (255, 255, 255))
-        text_surfaceA[10] = font.render(str(Env.carA.line_speed[0]), True, (255, 255, 255))
-        text_surfaceA[11] = font.render(str(Env.carA.line_speed[1]), True, (255, 255, 255))
-        text_surfaceA[12] = font.render(str(Env.carA.angular_speed), True, (255, 255, 255))
+        text_surfaceA[10] = font.render(str(round(Env.carA.line_speed[0], 2)), True, (255, 255, 255))
+        text_surfaceA[11] = font.render(str(round(Env.carA.line_speed[1], 2)), True, (255, 255, 255))
+        text_surfaceA[12] = font.render(str(round(Env.carA.angular_speed, 2)), True, (255, 255, 255))
         text_surfaceA[13] = font.render("", True, (255, 255, 255))
-        text_surfaceA[14] = font.render(str(Env.carA.pitch), True, (255, 255, 255))
+        text_surfaceA[14] = font.render(str(round(Env.carA.pitch, 2)), True, (255, 255, 255))
         text_surfaceA[15] = font.render(str(Env.carA.move_forbiden), True, (255, 255, 255))
         text_surfaceA[16] = font.render(str(Env.carA.shoot_forbiden), True, (255, 255, 255))
         text_surfaceA[17] = font.render(str(Env.carA.isdetected), True, (255, 255, 255))
@@ -307,13 +318,13 @@ def run_game():
         text_surfaceB[5] = font.render(str(Env.carB.HEAT_FREEZE), True, (255, 255, 255))
         text_surfaceB[6] = font.render(str(round(Env.carB.angle, 2)), True, (255, 255, 255))
         text_surfaceB[7] = font.render("", True, (255, 255, 255))
-        text_surfaceB[8] = font.render(str(Env.carB.v), True, (255, 255, 255))
+        text_surfaceB[8] = font.render(str(round(Env.carB.v, 2)), True, (255, 255, 255))
         text_surfaceB[9] = font.render(str(round(Env.carB.w_vel, 2)), True, (255, 255, 255))
-        text_surfaceB[10] = font.render(str(Env.carB.line_speed[0]), True, (255, 255, 255))
-        text_surfaceB[11] = font.render(str(Env.carB.line_speed[1]), True, (255, 255, 255))
-        text_surfaceB[12] = font.render(str(Env.carB.angular_speed), True, (255, 255, 255))
+        text_surfaceB[10] = font.render(str(round(Env.carB.line_speed[0], 2)), True, (255, 255, 255))
+        text_surfaceB[11] = font.render(str(round(Env.carB.line_speed[1], 2)), True, (255, 255, 255))
+        text_surfaceB[12] = font.render(str(round(Env.carB.angular_speed, 2)), True, (255, 255, 255))
         text_surfaceB[13] = font.render("", True, (255, 255, 255))
-        text_surfaceB[14] = font.render(str(Env.carB.pitch), True, (255, 255, 255))
+        text_surfaceB[14] = font.render(str(round(Env.carB.pitch, 2)), True, (255, 255, 255))
         text_surfaceB[15] = font.render(str(Env.carB.move_forbiden), True, (255, 255, 255))
         text_surfaceB[16] = font.render(str(Env.carB.shoot_forbiden), True, (255, 255, 255))
         text_surfaceB[17] = font.render(str(Env.carB.isdetected), True, (255, 255, 255))
@@ -344,5 +355,3 @@ def run_game():
 
 print(A.areas)
 run_game()
-
-

@@ -17,10 +17,10 @@ class CAR(object):
         self.x = local[0]           # 横坐标
         self.y = local[1]           # 纵坐标
         self.HEAT_FREEZE = -120     # 每秒冷却速度
-        self.angle = angle          # 绝对角度
+        self.angle = angle % 360    # 绝对角度
 
         self.v = 20                 # 子弹发射速度
-        self.w_vel = math.pi        # 炮台旋转速度
+        self.w_vel = 0        # 炮台旋转速度
         self.line_speed_xmax = 330    # x轴最大线速度
         self.line_speed_ymax = 330    # y轴最大速度
         self.angular_speed_max = 1.67  # 最大角速度
@@ -307,10 +307,14 @@ class CAR(object):
         """
         self.get_peak()
         for i in range(0, 8):
-            if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], self.mp.barrier_start[i], self.mp.barrier_start[i])
-                or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.barrier_start[i], self.mp.barrier_start[i])
-                    or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]], self.mp.barrier_start[i], self.mp.barrier_start[i])
-                        or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]], self.mp.barrier_start[i], self.mp.barrier_start[i])):
+            if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]],
+                                        self.mp.barrier_start[i], self.mp.barrier_start[i])
+                or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]],
+                                           self.mp.barrier_start[i], self.mp.barrier_start[i])
+                    or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]],
+                                               self.mp.barrier_start[i], self.mp.barrier_start[i])
+                        or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]],
+                                                   self.mp.barrier_start[i], self.mp.barrier_start[i])):
                 return 1
         if main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], [404, 207], [404, 241]):
                 return 1

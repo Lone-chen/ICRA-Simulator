@@ -11,7 +11,7 @@ class ver_env(object):
     def __init__(self):
         self.map = MAP()
         self.carA = CAR(0, 50, 0, 0, self.map, local=(398, 50))
-        self.carB = CAR(1, 50, math.pi/2, 0,self.map, local=(799, 50))
+        self.carB = CAR(1, 50, math.pi/2, 0,self.map, local=(699, 50))
 
         self.Afire = 0
         self.Bfire = 0
