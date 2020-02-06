@@ -198,7 +198,6 @@ def run_game():
         Env.carB.pitch = (Env.carB.pitch + Env.carB.w_vel) % 360
         Env.carB.x += Env.carB.line_speed[0] * 0.1
         Env.carB.y += Env.carB.line_speed[1] * 0.1
-
         # 判断A，B是否撞到障碍物或者墙壁
         if Env.carA.line_speed[0] > 0 and rect_A.right < A.length:
             Env.carA.x += Env.carA.line_speed[0] * 0.1
@@ -206,24 +205,34 @@ def run_game():
                 Env.carA.x -= Env.carA.line_speed[0] * 0.1
             rect_A.centerx = Env.carA.x
             gim_rect_A.centerx = Env.carA.x
+        else:
+            pass
         if Env.carA.line_speed[0] < 0 and rect_A.left > 0:
             Env.carA.x += Env.carA.line_speed[0] * 0.1
             if Env.carA.on_barriers() == 1:
                 Env.carA.x -= Env.carA.line_speed[0] * 0.1
             rect_A.centerx = Env.carA.x
             gim_rect_A.centerx = Env.carA.x
-        if Env.carA.line_speed[1] > 0 and rect_A.top > screen_rect.top:
+        else:
+            pass
+        if Env.carA.line_speed[1] > 0 and rect_A.bottom < screen_rect.bottom:
             Env.carA.y += Env.carA.line_speed[1] * 0.1
             if Env.carA.on_barriers() == 1:
                 Env.carA.y -= Env.carA.line_speed[1] * 0.1
             rect_A.centery = Env.carA.y
             gim_rect_A.centery = Env.carA.y
-        if Env.carA.line_speed[1] < 0 and rect_A.bottom < screen_rect.bottom:
+        else:
+            pass
+        if Env.carA.line_speed[1] < 0 and rect_A.top > screen_rect.top:
             Env.carA.y += Env.carA.line_speed[1] * 0.1
             if Env.carA.on_barriers() == 1:
                 Env.carA.y -= Env.carA.line_speed[1] * 0.1
             rect_A.centery = Env.carA.y
             gim_rect_A.centery = Env.carA.y
+        else:
+            pass
+        print(rect_A.top, rect_A.bottom, rect_A.left, rect_A.right)
+        print(screen_rect.top, screen_rect.bottom, 0, A.length)
 
         if Env.carB.line_speed[0] > 0 and rect_B.right < A.length:
             Env.carB.x += Env.carB.line_speed[0] * 0.1
@@ -231,24 +240,32 @@ def run_game():
                 Env.carB.x -= Env.carB.line_speed[0] * 0.1
             rect_B.centerx = Env.carB.x
             gim_rect_B.centerx = Env.carB.x
+        else:
+            pass
         if Env.carB.line_speed[0] < 0 and rect_B.left > 0:
             Env.carB.x += Env.carB.line_speed[0] * 0.1
             if Env.carB.on_barriers() == 1:
                 Env.carB.x -= Env.carB.line_speed[0] * 0.1
             rect_B.centerx = Env.carB.x
             gim_rect_B.centerx = Env.carB.x
-        if Env.carB.line_speed[1] > 0 and rect_B.top > screen_rect.top:
+        else:
+            pass
+        if Env.carB.line_speed[1] > 0 and rect_B.bottom > screen_rect.bottom:
             Env.carB.y += Env.carB.line_speed[1] * 0.1
             if Env.carB.on_barriers() == 1:
                 Env.carB.y -= Env.carB.line_speed[1] * 0.1
             rect_B.centery = Env.carB.y
             gim_rect_B.centery = Env.carB.y
-        if Env.carB.line_speed[1] < 0 and rect_B.bottom < screen_rect.bottom:
+        else:
+            pass
+        if Env.carB.line_speed[1] < 0 and rect_B.top < screen_rect.top:
             Env.carB += Env.carB.line_speed[1] * 0.1
             if Env.carB.on_barriers() == 1:
                 Env.carB.y -= Env.carB.line_speed[1] * 0.1
             rect_B.centery = Env.carB.y
             gim_rect_A.centery = Env.carA.y
+        else:
+            pass
 
         # 更新图像
         newimage_A = pygame.transform.rotate(image_A, Env.carA.angle)
