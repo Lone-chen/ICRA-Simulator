@@ -231,8 +231,8 @@ def run_game():
             gim_rect_A.centery = Env.carA.y
         else:
             pass
-        print(rect_A.top, rect_A.bottom, rect_A.left, rect_A.right)
-        print(screen_rect.top, screen_rect.bottom, 0, A.length)
+        # print(rect_A.top, rect_A.bottom, rect_A.left, rect_A.right)
+        # print(screen_rect.top, screen_rect.bottom, 0, A.length)
 
         if Env.carB.line_speed[0] > 0 and rect_B.right < A.length:
             Env.carB.x += Env.carB.line_speed[0] * 0.1
@@ -250,7 +250,7 @@ def run_game():
             gim_rect_B.centerx = Env.carB.x
         else:
             pass
-        if Env.carB.line_speed[1] > 0 and rect_B.bottom > screen_rect.bottom:
+        if Env.carB.line_speed[1] > 0 and rect_B.bottom < screen_rect.bottom:
             Env.carB.y += Env.carB.line_speed[1] * 0.1
             if Env.carB.on_barriers() == 1:
                 Env.carB.y -= Env.carB.line_speed[1] * 0.1
@@ -258,7 +258,7 @@ def run_game():
             gim_rect_B.centery = Env.carB.y
         else:
             pass
-        if Env.carB.line_speed[1] < 0 and rect_B.top < screen_rect.top:
+        if Env.carB.line_speed[1] < 0 and rect_B.top > screen_rect.top:
             Env.carB += Env.carB.line_speed[1] * 0.1
             if Env.carB.on_barriers() == 1:
                 Env.carB.y -= Env.carB.line_speed[1] * 0.1
