@@ -152,8 +152,8 @@ class CAR(object):
 
         nrx = (x-pointx)*cos(angle) - (y-pointy)*sin(angle)+pointx
         nry = (y-pointy)*sin(angle) + (y-pointy)*cos(angle)+pointy
-        :param MAP: map地图
-        :return:顶点坐标数组peak
+        MAP: map地图
+        顶点坐标数组peak
         """
         # 从左上角为1开始标记，依次依据公式计算四个顶点的坐标，顺时针
         self.peak[0] = int(
@@ -292,12 +292,13 @@ class CAR(object):
         :return: 对应buff区的编号,若未踩到buff区则返回0
         """
         self.get_peak()
-        for i in range(0, 6):
-            if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
-                or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]], self.mp.area_start[i], self.mp.area_end[i])
-                    or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]], self.mp.area_start[i], self.mp.area_end[i])
-                        or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]], self.mp.area_start[i], self.mp.area_end[i])):
-                return self.mp.areas[i]
+        for n in range(0, 6):
+            for i in range(0, 4):
+                for j in range(i + 1, 4):
+                    list = main.get_line.get_lines(int(self.peak[2 * i]), int(self.peak[2 * i + 1]), int(self.peak[2 * j]), int(self.peak[2 * j + 1]))
+                    for p, q in list:
+                        if (p > 0 and p < self.mp.length and q > 0 and q < self.mp.width and self.mp.map[q][p] == n) or p >= self.mp.length:
+                            return self.mp.areas[n]
         return 0
 
     def on_barriers(self):
@@ -306,18 +307,12 @@ class CAR(object):
         :return: 0为未碰到,1为碰到
         """
         self.get_peak()
-        for i in range(0, 8):
-            if (main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]],
-                                        self.mp.barrier_start[i], self.mp.barrier_start[i])
-                or main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[2], self.peak[3]],
-                                           self.mp.barrier_start[i], self.mp.barrier_start[i])
-                    or main.intersect.is_inter([self.peak[4], self.peak[5]], [self.peak[6], self.peak[7]],
-                                               self.mp.barrier_start[i], self.mp.barrier_start[i])
-                        or main.intersect.is_inter([self.peak[2], self.peak[3]], [self.peak[4], self.peak[5]],
-                                                   self.mp.barrier_start[i], self.mp.barrier_start[i])):
-                return 1
-        if main.intersect.is_inter([self.peak[0], self.peak[1]], [self.peak[6], self.peak[7]], [404, 207], [404, 241]):
-                return 1
+        for i in range(0, 4):
+            for j in range(i + 1, 4):
+                list = main.get_line.get_lines(int(self.peak[2*i]), int(self.peak[2*i+1]), int(self.peak[2*j]), int(self.peak[2*j+1]))
+                for p, q in list:
+                    if (p > 0 and p < self.mp.length and q > 0 and q < self.mp.width and self.mp.map[q][p] == 1) or p >= self.mp.length:
+                        return 1
         return 0
 
     def change_location(self, l_v, angle_v):
